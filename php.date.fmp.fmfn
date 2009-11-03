@@ -1,0 +1,8 @@
+/*
+php.date.fmp( string )
+RETURNS:  (date) FMP compatible date format
+
+Can be used to store a php script within a variable or calculation
+*/
+
+PHP_Execute ("print strtotime('" &  string & "');" )

@@ -1,0 +1,17 @@
+/*
+=====================================================
+html.attribute ( name ; value ; tag )
+
+RETURNS:    (string) Applies an attribute to an html tag
+DEPS:       none
+NOTES:      
+=====================================================
+*/
+
+Let( [
+    var.start = Position( tag; ">"; 1; 1 );
+    var.attribute = " " & name & "=" & quote( value )
+  ];
+
+  Replace( tag; var.start; 0; var.attribute )
+)

@@ -1,0 +1,22 @@
+/*
+=====================================================
+html.wraptag ( values; tag )
+
+RETURNS:    (string) HTML tags wrapped around a supplied list of items
+DEPS:       none
+NOTES:      
+=====================================================
+*/
+
+Let ([
+
+  var.isList = ValueCount( values ) > 1;
+  var.opentag = "<" & tag & ">";
+  var.closetag = Replace( var.opentag; 1; 1; "</");
+  var.between = var.closetag & var.opentag
+
+];
+
+  var.opentag & If ( var.isList; Substitute( values; ¶; var.between ); values ) & var.closetag
+
+)

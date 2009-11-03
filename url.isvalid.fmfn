@@ -1,0 +1,29 @@
+/*
+=====================================================
+url.isvalid ( string ; protocols )
+
+RETURNS:    (boolean) Whether a url is valid or not
+DEPS:       none
+NOTES:      Provide additional protocols as needed
+=====================================================
+*/
+
+Let (
+var.protocols = List(
+"http://";
+"https://";
+) & ¶ & protocols;
+
+PatternCount ( var.protocols ; Left ( string ; Position ( string ; "://" ; 1 ; 1 ) + 2 ) )
+
+)
+
+/*
+Unit tests
+
+List(
+url.isvalid( "http://example.com"; "" );
+url.isvalid( "https://example.com"; "" )
+)
+
+*/

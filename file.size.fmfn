@@ -1,0 +1,30 @@
+// Calculate the human readable size from bytes
+
+/*
+=====================================================
+file.size ( bytes )
+
+RETURNS:    (string) Human readable file size in bytes
+DEPS:       none
+NOTES:      Using the Length() function on a container will return size in bytes
+=====================================================
+*/
+
+Let( [
+
+  b = bytes;
+  kb = b / 1024;
+  mb = b / 1024^2;
+  gb = b / 1024^3;
+  tb = b / 1024^4
+
+];
+
+  Case(
+    Div( 1024; kb ) > 0; Round( kb ; 2 ) & " KB";
+    Div( 1024; mb ) > 0; Round( mb ; 2 ) & " MB";
+    Div( 1024; gb ) > 0; Round( gb ; 2 ) & " GB";
+    Div( 1024; tb ) > 0; Round( tb ; 2 ) & " TB";
+    b
+  )
+)

@@ -1,0 +1,25 @@
+/*
+ * =====================================================
+ * portal.filter ( input )
+ * RETURNS:        (list) a range of characters from low to high
+ * DEPENDENCIES:   none 
+ * NOTES:          none
+ * =====================================================
+ * 
+ */
+ 
+Let (
+    var.ending = "í¡¿í¿¿í¡¿í¿¿í¡¿í¿¿í¡¿í¿¿";
+
+    Case ( IsEmpty ( input );
+      List (
+          "       ";
+          var.ending
+      );
+      // -- Default result
+      List (
+          input;
+          input & var.ending
+       )
+    )
+)

@@ -1,0 +1,27 @@
+/*
+ *=====================================================
+ *file.ospath( path; escaped )
+ *
+ *RETURNS:    (string) an os cleaned version of a path.
+ *PARAMS      path = (string) name of the file/folder location
+ *            escaped = (bool) whether the path should escape special characters
+ *DEPS:       none
+ *NOTES:      ScriptMaster and some other plugins do their own escaping internally
+ *This function will also work on a return delimited list of paths
+ *=====================================================
+ *
+ */
+
+Let( [
+  _Windows = Abs( Get( SystemPlatform ) ) - 1;
+  _NewPath = If ( Left( path; 5) = "file:"; Substitute( Middle( path; 6; 1000000 ); "¶file:"; "¶" ); path );
+  _MacPath = "/Volumes" & Substitute( _NewPath; ¶; "¶/Volumes");
+  _WinPath = Substitute( Middle( Substitute ( _NewPath ; "/" ; "\\" ); 2; 1000000 ); "¶\\"; "¶")
+  ];
+  If ( _Windows;
+  
+    If ( escaped; _WinPath; _WinPath );
+
+    If ( escaped; Substitute( _MacPath; [" "; "\ "]; [","; "\,"] ); _MacPath )
+  )
+)

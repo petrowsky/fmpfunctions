@@ -1,0 +1,11 @@
+/*
+=====================================================
+window.frontmost( name )
+
+RETURNS:    (bool) If the frontmost window is the one specified.
+DEPS:       
+NOTES:
+=====================================================
+*/
+
+GetValue( WindowNames; 1 ) = name

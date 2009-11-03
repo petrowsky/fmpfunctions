@@ -1,0 +1,48 @@
+/*
+ * =====================================================
+ * file.setpath( location; subfolder )
+ * 
+ * RETURNS:    (string) path to file/folder location.
+ * PARAMS      location = (string) name of the folder location
+ *             subfolder = (string) any subfolders you wish to append
+ * DEPS:       none
+ * NOTES:      none
+ * =====================================================
+ *
+ */
+
+Let(
+[
+_Windows = Abs( Get( SystemPlatform ) ) - 1;
+
+_Paths = "Let( [
+            _Windows = Abs( Get( SystemPlatform ) ) - 1;
+
+            _Desktop     = Get( DesktopPath );
+            _Documents   = Get( DocumentsPath );
+            _Application = Get( FileMakerPath );
+            _File        = Substitute( Get( FilePath ) ; \"file:\" ; \"\" );
+            _Preferences = Get( PreferencesPath );
+            _Temp        = If ( _Windows; Substitute ( _Documents ; \"My Documents\" ; \"Local Settings\" ) & \"Temp/\"; \"/private/tmp/\" );
+            _Extensions  = Get( FileMakerPath ) & \"Extensions/\"
+
+            ];¶_" &
+            location
+            & ")";
+
+// Only these values for folder are possible
+_Match = "Desktop Documents Application File Preferences Temp Extensions";
+
+// Generate the actual path
+_Path = If ( PatternCount( _Match ; location );  Evaluate( _Paths ) ; location ) & If ( not IsEmpty( subfolder ); subfolder );
+
+// Remove the filename
+_File = Get( FileName ) & ".fp7";
+_HasFile = PatternCount( _Path; _File );
+_Path = If ( _HasFile; Substitute( _Path; _File; ""); _Path )
+
+];
+
+_Path
+
+)

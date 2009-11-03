@@ -1,0 +1,6 @@
+/*
+os.isWindows( )
+RETURNS:  (bool) 
+*/
+
+Case( Get( SystemPlatform ) = -2; 1; 0 )

@@ -1,0 +1,16 @@
+/*
+=====================================================
+window.offscreen( side )
+
+RETURNS:    (int) Number value of where offscreen window should show up.
+DEPS:       Developer custom function.
+NOTES:      Based on a boolean result of a function named "Developer" the window
+            is drawn on the screen or off.
+=====================================================
+*/
+
+Case(
+side = "top" ; If ( Developer; Get ( WindowTop ); Get ( WindowDesktopHeight ) );
+side = "left" ; If ( Developer; Get ( WindowLeft ); Get ( WindowDesktopWidth ) );
+0
+)

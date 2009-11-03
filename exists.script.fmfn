@@ -1,0 +1,16 @@
+/*
+=====================================================================
+exists.script ( name ; file )
+
+RETURNS:          (bool) Whether or not the script exists in the file
+
+DEPENDENCIES:     list.valueWithin()
+AUTHOR:           Matt Petrowsky
+VERSION:          1.0
+NOTES:            None
+
+=====================================================================
+*/
+
+
+list.valueWithin ( ScriptNames ( file ) ; name )

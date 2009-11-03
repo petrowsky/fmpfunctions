@@ -1,0 +1,33 @@
+/*
+ * =====================================================
+ * developer ()
+ * 
+ * RETURNS: Boolean result based on checking for a given
+ *          account, privelege set or other critera - 
+ *          you decide (see notes at bottom). 
+ * DEPENDANCIES: list.valueWithin()
+ * =====================================================
+ */
+
+
+Let ( [ 
+  //------------------------- VARIABLES
+
+  var.developers = List( ""; "Admin" )  // Add the names of the accounts which are valid developer accounts
+
+];
+  //------------------------- RESULT
+
+  PatternCount ( ¶& var.developers &¶ ; ¶& Get ( AccountName ) &¶ )
+  or
+  Get ( PrivilegeSetName ) = "[Full Access]"
+
+)
+
+/*
+Note: if you're paranoid about security, you need to
+know that a super adept hacker would know how to scrape
+variable values out of memory, despite not being shown
+by FileMaker. Anything stored in global variables $$ can be
+captured - although you REALLY have to know a lot to do it.
+*/

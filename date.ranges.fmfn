@@ -1,0 +1,110 @@
+/*
+=====================================================
+date.ranges( string; separator; withtime )
+
+RETURNS:    (string) FileMaker specific date range string.
+DEPS:       none
+NOTES:      The withtime value is a bool which will account for adding 24
+            hours when used with a timestamp field type. Normal FMP dates
+            assume 12:00 AM with just a raw date
+=====================================================
+*/
+Let(
+[
+_Now = Get( CurrentDate );
+_TimeValue = If ( withtime; 1; 0) // Option for adding a day to the end date because fmp assumes 12:00 AM with raw date.
+];
+  Case(
+    string = "Today";
+      _Now & separator & _Now + _TimeValue;
+
+    string = "Yesterday";
+      Let( _Yesterday = _Now - 1; _Yesterday & separator & _Yesterday + _TimeValue);
+
+    string = "Tomorrow";
+      Let( _Tomorrow = _Now + 1; _Tomorrow & separator & _Tomorrow + _TimeValue);
+
+    string = "ThisWeek";
+      _Now - DayOfWeek(_Now) + 1 & separator & _Now + ( 7 - DayOfWeek(_Now)) + _TimeValue;
+
+    string = "LastWeek";
+      _Now - DayOfWeek(_Now) - 6 & separator & _Now - DayOfWeek(_Now) + _TimeValue;
+
+    string = "NextWeek";
+      Let( sunday = _Now + ( 8 - DayOfWeek(_Now)); sunday & separator & sunday + 6 + _TimeValue);
+
+    string = "ThisMonth";
+      Let( firstday = Date( Month(_Now); 1; Year(_Now)); firstday & separator & Date( Month(firstday) + 1; 0; Year(firstday)) + _TimeValue);
+
+    string = "LastMonth";
+      Let( lastday = Date( Month(_Now); 0; Year(_Now)); Date( Month(lastday); 1; Year(lastday)) & separator & lastday  + _TimeValue);
+
+    string = "NextMonth";
+      Let( firstday = Date( Month(_Now) + 1; 0; Year(_Now)) + 1; firstday & separator & Date( Month(firstday) + 1; 0; Year(firstday)) + _TimeValue);
+
+    string = "ThisYTD";
+      Date(1; 1; Year(_Now)) & separator & _Now + _TimeValue;
+
+    string = "LastYTD";
+      Date(1; 1; Year(_Now)-1) & separator & Date(Month(_Now); Day(_Now); Year(_Now) - 1) + _TimeValue;
+
+    string = "NextYTD";
+      Date(1; 1; Year(_Now) + 1) & separator & Date(Month(_Now); Day(_Now); Year(_Now) + 1) + _TimeValue;
+
+    string = "ThisYear";
+      Date(1; 1; Year(_Now)) & separator & Date(12; 31; Year(_Now)) + _TimeValue;
+
+    string = "LastYear";
+      Date(1; 1; Year(_Now) - 1) & separator & Date(12; 31; Year(_Now) - 1) + _TimeValue;
+
+    string = "NextYear";
+      Date(1; 1; Year(_Now) + 1) & separator & Date(12; 31; Year(_Now) + 1) + _TimeValue;
+
+    string = "ThisQuarter" or
+    string = "LastQuarter" or
+    string = "NextQuarter";
+      Let (
+        xMod = Case (
+          Mod( Month( _Now ) ; 3 ) = 0; 3;
+          Mod( Month( _Now ) ; 3 ) );
+        Case(
+          string = "ThisQuarter";
+            Date( Month(_Now) - xMod + 1; 1; Year(_Now) ) & separator & _Now + _TimeValue;
+          
+          string = "LastQuarter";
+            Date( Month(_Now) - xMod - 2; 1; Year(_Now) ) & separator & Date( Month(_Now) - xMod + 1; 1; Year(_Now) ) - 1 + _TimeValue;
+          
+          string = "NextQuarter";
+            Date( Month(_Now) - xMod + 4; 1; Year(_Now) ) & separator & Date( Month(_Now) - xMod + 7; 1; Year(_Now) ) - 1 + _TimeValue
+        )
+      );
+      
+    string = "test";
+      "Today       = " & date.ranges("Today"; separator; withtime) & ¶ &
+      "Yesterday   = " & date.ranges("Yesterday"; separator; withtime) & ¶ &
+      "Tomorrow    = " & date.ranges("Tomorrow"; separator; withtime) & ¶ &
+      "ThisWeek    = " & date.ranges("ThisWeek"; separator; withtime) & ¶ &
+      "LastWeek    = " & date.ranges("LastWeek"; separator; withtime) & ¶ &
+      "NextWeek    = " & date.ranges("NextWeek"; separator; withtime) & ¶ &
+      "ThisMonth   = " & date.ranges("ThisMonth"; separator; withtime) & ¶ &
+      "LastMonth   = " & date.ranges("LastMonth"; separator; withtime) & ¶ &
+      "NextMonth   = " & date.ranges("NextMonth"; separator; withtime) & ¶ &
+      "ThisYTD     = " & date.ranges("ThisYTD"; separator; withtime) & ¶ &
+      "LastYTD     = " & date.ranges("LastYTD"; separator; withtime) & ¶ &
+      "NextYTD     = " & date.ranges("NextYTD"; separator; withtime) & ¶ &
+      "ThisYear    = " & date.ranges("ThisYear"; separator; withtime) & ¶ &
+      "LastYear    = " & date.ranges("LastYear"; separator; withtime) & ¶ &
+      "NextYear    = " & date.ranges("NextYear"; separator; withtime) & ¶ &
+      "ThisQuarter = " & date.ranges("ThisQuarter"; separator; withtime) & ¶ &
+      "LastQuarter = " & date.ranges("LastQuarter"; separator; withtime) & ¶ &
+      "NextQuarter = " & date.ranges("NextQuarter"; separator; withtime)
+  )
+)
+/*
+Original by
+Andy Frazier, Mx4Px
+http://www.andyfrazier.com
+via Briandunning.com
+Compliments to Excelisys
+Modified by Matt Petrowsky
+*/

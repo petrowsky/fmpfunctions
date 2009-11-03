@@ -1,0 +1,11 @@
+/*
+=====================================================
+html.paragraphs ( content )
+
+RETURNS:    (string) Conversion of ¶'s into </p><p>
+DEPS:       none
+NOTES:      
+=====================================================
+*/
+
+"<p>" & Substitute ( content ; "¶¶" ; "</p>¶<p>" ) & "</p>"

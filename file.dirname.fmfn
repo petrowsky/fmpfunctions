@@ -1,0 +1,26 @@
+/*
+=====================================================
+file.dirname( path )
+
+RETURNS:    (string) parent folder location of specified path.
+DEPS:       none
+NOTES:      none
+=====================================================
+*/
+
+Let (
+[
+//------------------------- VARIABLES
+
+  lastchar = Right( path ; 1 );
+  path = If ( IsEmpty( path ) ; Get( FilePath ) ; path );
+  filename = Get( FileName ) & ".fp7";
+  folder = Substitute( path ; filename ; "" );
+  folder = Left( folder ; Length ( folder ) - 1 )
+
+];
+//------------------------- RESULT
+
+  If ( lastchar = "/"; 0; folder )
+
+)

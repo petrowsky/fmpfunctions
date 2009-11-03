@@ -1,0 +1,32 @@
+/*
+=====================================================
+string.trim( text; characters )
+
+RETURNS:        (string) original string less supplied list of values
+PARAMS:         text = string; characters = List()
+DEPENDENCIES:   none
+VERSION:        1.0
+AUTHOR:         See notes
+NOTES:
+Adapted by Matt Petrowsky from
+http://www.briandunning.com/cf/904
+Compliments to Debi Fuchs, Aptworks Consulting
+=====================================================
+*/
+
+Let([
+        $var.text = text;
+        var.default = List( " "; " "; "	"; "\¶"); // Default list of characters to remove (space, tab, return)
+        var.characters = If ( IsEmpty( characters ); var.default; characters );
+
+        var.function.parts = "[\"" & Substitute( var.characters; ¶; "\"; \"\"];¶[\"" ) & "\"; \"\"]";
+        var.function.clean = "Substitute( $var.text; " & var.function.parts & " )"; // Strip out specified chars
+        var.function.result = Evaluate( var.function.clean );
+
+        var.char.first = Position( text; Left( var.function.result; 1 ); 0; 1 ); // Position of first (non cleaned) char
+        var.char.last = Position( text; Right( var.function.result; 1 ); Length( text ); -1 ) // Position of last (non cleaned) char
+    ];
+    
+        Case( var.char.first; Middle( text; var.char.first; var.char.last - var.char.first + 1 ) )
+
+)

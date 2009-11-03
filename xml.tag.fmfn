@@ -1,0 +1,31 @@
+/*
+=====================================================
+xml.tag ( tag; attributes; value )
+
+RETURNS:    (string) Valid XML tag with attributes
+DEPS:       none
+NOTES:      http://www.w3.org/TR/xml/
+=====================================================
+*/
+
+Let ( [
+
+  var.tag.cleaned = Filter ( tag ; "ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz" );
+
+  var.value.cleaned = Substitute( value;
+              ["|";" "]; /* pipe */
+              [" ";" "]; /* shift-space */
+              ["&";"&amp;"];
+              ["<";"&lt;"];
+              [">";"&gt;"];
+              ["\"";"&quot;"];
+              ["'";"&apos;"]
+            )
+];
+
+  "<" & var.tag.cleaned & attributes & ">" & var.value.cleaned & "</" & var.tag.cleaned & ">"
+  
+)
+
+// TODO:
+// Not currently validating that attributes are properly formatted - just passing them through

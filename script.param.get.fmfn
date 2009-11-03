@@ -1,0 +1,54 @@
+/*
+=====================================================
+script.param.get( values; key)
+
+RETURNS:        (mixed) the value associated to the supplied key
+DEPENDENCIES:   none
+NOTES:          Compliments to Mikhail Edoshin http://edoshin.typepad.com/
+=====================================================
+
+This function is used to extract a named value from a
+data structure which preserves carriage returns and
+other special characters.
+*/
+
+Case(
+    IsEmpty( values ) or IsEmpty( key ); 
+        "";
+
+    Let(
+    [
+        //------------------------- VARIABLES
+        
+        var.UnwrappedValues = Substitute( values;
+                                        [ "¶"; "" ];
+                                        [ ".^^"; "¶" ];
+                                        [ ".^"; "^" ] );
+        var.KeyPosition = Position( "¶" & values; "¶.^^" & key & ".^^"; 1; 1 )
+    ];
+
+        //------------------------- RESULT
+        
+        If( var.KeyPosition = 0; "";
+          Let(
+                [
+                    //------------------------- VARIABLES
+                    
+                    var.ValuePosition = ValueCount( Left( values; var.KeyPosition ) );
+                    var.OptionString = MiddleValues( values; var.ValuePosition; 1 );
+                    var.Start = Position( var.OptionString; ".^^"; 1; 2 ) + Length( ".^^" );
+                    var.End = Position( var.OptionString; ".^^"; 1; 3 )
+                ];
+
+                    //------------------------- RESULT
+                    
+                    Substitute( Middle( var.OptionString; var.Start; var.End - var.Start ); 
+                                [ ".^^"; "¶" ];
+                                [ ".^"; "^" ];
+                                [ "¶"; "" ];
+                                [ ".^^"; "¶" ];
+                                [ ".^"; "^" ] )
+               )
+        ) 
+    )
+)

@@ -1,0 +1,81 @@
+/*
+=====================================================
+list.sort( values; direction; type )
+
+RETURNS:        (list) sorted version of the list
+DEPENDENCIES:    
+VERSION:        1.0
+AUTHOR:         See notes
+NOTES:
+
+Function uses a lot of recursion - be aware of list
+size limitations!
+
+Adapted and combined by Matt Petrowsky from
+http://www.briandunning.com/cf/593 and
+http://www.briandunning.com/cf/594
+
+Compliments to Shaun Flisakowski & Mogens Brun
+=====================================================
+*/
+
+Let( divider = "||"; // Define the delimiter to divide the two halfs of the whole inbound list(should not be a possible list character)
+
+    Case(
+
+    PatternCount( values; divider ) = 1; // If the two lists contains the designated divider we'll run the sorting subfunction.
+
+    // START SUBFUNCTION
+
+    Let([
+            list.splitpoint = Position( values; divider; 1; 1 ); // Point where list is combined by divider
+            values.left = Left( values; list.splitpoint - 1 ); // Real left side list
+            values.right = Right( values; Length( values ) - ( list.splitpoint + Length( divider ) - 1 ) ); // Real right side list
+            $left.size = ValueCount( values.left );
+            $right.size = ValueCount( values.right )
+        ];
+            Case(
+                $left.size = 0; values.right;
+                $right.size = 0; values.left;
+
+                Let([
+                        $value.left = LeftValues( values.left; 1 );
+                        $value.right = LeftValues( values.right; 1 );
+                        $left.compare = Case(
+                                            type = "Number"; Let( $right.compare = GetAsNumber( $value.right ); GetAsNumber( $value.left ) );
+                                            type = "Time"; Let( $right.compare = GetAsTime( $value.right ); GetAsTime( $value.left ) );
+                                            type = "Date"; Let( $right.compare = GetAsDate( $value.right ); GetAsDate( $value.left ) );
+                                            // Default
+                                            Let( $right.compare = $value.right; $value.left )
+                                            )
+                     ];
+                        // Determine sort direction based on supplied parameter. Default to Ascending as most common
+                        
+                        If( If( direction = "Dsc"; $left.compare ≥ $right.compare; $left.compare < $right.compare );
+                        $value.left & list.sort( RightValues( values.left; $left.size - 1 ) & divider & values.right; direction; type );
+                        $value.right & list.sort( values.left & divider & RightValues( values.right; $right.size - 1 ); direction; type )
+                        )
+                )
+            )
+    );
+
+    // MAIN SORTING FUNCTION
+    
+        Let(
+            $list.size = ValueCount( values );
+
+            If( $list.size ≤ 1;
+                values;
+
+                Let( [
+                    list.splitpoint = Div( $list.size; 2 ); // Get dividing point to split whole list in half 
+                    left.list = LeftValues( values; list.splitpoint ); // Left half of the list
+                    right.list = RightValues( values; $list.size - list.splitpoint ) // Right half of the list
+                  ];
+                    // Walk through the two lists comparing values
+                    list.sort( list.sort( left.list; direction; type ) & divider & list.sort(right.list; direction; type ); direction; type )
+                )
+            )
+        )
+    )
+)

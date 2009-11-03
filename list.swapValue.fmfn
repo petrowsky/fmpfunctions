@@ -1,0 +1,34 @@
+/*
+ * =====================================================
+ * list.swapValue ( valuelist ; value; pos )
+ * RETURNS:        (list) New list with new value in designated position
+ * DEPENDENCIES:   none 
+ * NOTES:          see var.eval for declaring multiple variables
+ * =====================================================
+ * 
+ */
+
+Let ( [
+    // VARIABLES
+    var.valuecount = ValueCount ( valuelist );
+    var.slotexists = var.valuecount > pos;
+    var.filler = "¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶¶";
+    var.filleramount = If ( not var.slotexists ; Left ( var.filler ; pos - var.valuecount - 1 ) );
+    var.tophalf = LeftValues ( valuelist ; pos - 1 );
+    var.tophalf = Left ( var.tophalf ; Length ( var.tophalf ) - 1 ) & var.filleramount; // trim extra return
+    var.bottomhalf = RightValues ( valuelist ; var.valuecount - pos );
+    var.bottomhalf = Left ( var.bottomhalf ; Length ( var.bottomhalf ) - 1 ) // trim extra return
+];
+    // RESULT
+    var.tophalf &
+    If ( pos > 1 ; ¶ & value ; value ) &
+    If ( not IsEmpty ( var.bottomhalf ) ; ¶ & var.bottomhalf )
+)
+
+/*
+// Testing values - prefix to variables within Data Viewer
+valuelist = List ( "tab.hah"; "tab.goog"; "tab.raw"; "tab.random");
+valuelist = "tab.hah¶tab.goog¶tab.raw¶tab.random";
+value = "===";
+pos = 1;
+*/

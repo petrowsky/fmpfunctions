@@ -1,0 +1,21 @@
+/*
+ExtractLine ( data ; match )
+Returns: (string) From specified match value until carriage return
+Note: Will match the first found occurrence
+*/
+
+Let(
+[
+_Start = Position ( data ; match ; 1 ; 1 ) + Length( match ) ;
+_End = Position ( data ; ¶ ; _Start ; 1 ) ;
+_Length = _End - _Start
+];
+
+Middle ( data ; _Start ; _Length )
+
+)
+
+/*
+Example:
+list.extract.keyedvalue ( data ; "¶Subject: ") // Will extract the subject line
+*/

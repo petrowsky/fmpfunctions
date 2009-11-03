@@ -1,0 +1,27 @@
+/*
+=====================================================
+path.dirname( path )
+
+RETURNS:  (string) The parent folder of a specified file path
+DEPS:       developer() function.
+NOTES:      While testing non developer accounts you may need to take off if ( developer )
+
+=====================================================
+*/
+
+Let (
+[
+//------------------------- VARIABLES
+
+lastchar = Right ( path ; 1 );
+path = If( IsEmpty ( path ) ; Get ( FilePath ) ; path );
+filename = Get ( FileName ) & ".fp7";
+folder = Substitute ( path ; filename ; "" );
+folder = Left ( folder ; Length ( folder ) - 1 )
+
+];
+//------------------------- RESULT
+
+If ( lastchar = "/"; 0; folder )
+
+)

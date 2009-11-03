@@ -1,0 +1,57 @@
+/*
+=====================================================
+html.checkbox ( string ; variable )
+
+RETURNS:        (html) A single html checkbox based on the boolean value of a variable
+DEPENDENCIES:   none
+VERSION:        1.0
+AUTHOR:         Matt Petrowsky
+NOTES:          Advanced developers can do cool stuff with Javascript/DOM and using hidden values
+
+=====================================================
+*/
+
+Let(
+
+  var.checked = Evaluate( "$$" & variable );
+
+  List(
+    "data:text/html,";
+    "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"
+    \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">";
+    "<html style=\"font: 9pt Verdana;\">"; // Define the font here
+    "<head>";
+    "<title>Single Checkbox</title>";
+    "</head>";
+    "<body style=\"margin: 0px; padding: 0px; background-color: white; overflow: hidden; white-space: nowrap;\">"; // No wrap and overflow settings
+    "<form action=\"/\" method=\"get\" accept-charset=\"utf-8\">";
+    "<input id=\"checkbox\" name=\"checkbox\" value=\"option\" type=\"checkbox\" " & If ( var.checked ; "checked" ; "" ) & ">";
+    string;
+    "</option>";
+    "</form>";
+    "</body>";
+    "</html>"
+  )
+
+)
+
+
+
+/*
+
+FOR SUPER ADVANCED DEVELOPERS ONLY!
+
+If, for some reason, you want to use multiple checkboxes and you want to know the value of each
+you'll need to use a more advanced implementation of hiding text at the end of the input options
+
+Javascript would be used to change the value trailing the option - the following will do a toggle within the web page
+"<input id=\"checkbox\" name=\"checkbox\" value=\"option\" type=\"checkbox\" onclick=\"box=document.getElementById('checkbox'); result = document.getElementById('result'); result.innerHTML = box.checked;\">";
+
+Option would look like this. Using a trailing span, you can store the value and use a very hackish way of getting the values using Select All -> Copy
+ "</option><span id=\"result\" style=\"color:white;\">" & var.initial & "</span>";
+
+Other variables would be helpful
+var.initial = If ( var.checked ; "true" ; "false" );
+var.script = If ( var.checked ; "<script type=\"text/javascript\">box = document.getElementById('checkbox'); box.checked=" & var.initial & "</script>" ; "" )
+
+*/

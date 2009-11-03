@@ -1,0 +1,44 @@
+/*
+plugin.valid( name ; version )
+
+RETURNS:  (bool) Result of whether the tested plugin is there or not and also the version.
+
+NOTES: Uses global variables of $$PLUGIN_VERSION and $$PLUGIN_MESSAGE as return values.
+*/
+
+Let( [
+//------------------------- VARIABLES
+
+/*
+  Provide a list of plugins and their version functions to be
+  used for universal checking of the plugin. This one function
+  is where you can store all of your solution plugin checks.
+*/
+
+  _PluginVersion = "Let( $$PLUGIN_VERSION = EXTERNAL ; 0 )";
+
+  _Found = Case(
+    //--------------------------- ZIPPSCRIPT
+    name = "ZippScript" ; 
+         not EvaluationError( Evaluate( Substitute( _PluginVersion ; "EXTERNAL" ; "zippScript_Version( \"\" )" )  ) );
+    //--------------------------- DOSCRIPT
+    name = "DoScript" ;
+         not EvaluationError( Evaluate( Substitute( _PluginVersion ; "EXTERNAL" ; "S4HU_VersionEventScript" )  ) );
+    //----------------------------------------------------------------------------------------
+  0
+  );
+
+  _Message_Missing = "The plugin " & name & " is required for this solution to function properly.";
+  _Message_Version = "Your version of the plugin " & name & " is at " & $$PLUGIN_VERSION & " you need " & version & ".";
+
+  _Version_Ok = $$PLUGIN_VERSION >= version;
+
+  $$PLUGIN_MESSAGE = Case ( not _Found; _Message_Missing; not _Version_Ok; _Message_Version; "" )
+
+];
+
+//------------------------- RESULT
+
+If ( _Found and _Version_Ok; 1 ; 0 )
+
+)

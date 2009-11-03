@@ -1,0 +1,39 @@
+// Currently has a problem with different variations (e.g. Layouts vs. layouts) - needs debugging
+
+/*
+=====================================================
+list.sort.defined( values; order )
+
+RETURNS:        (list) sorted list according to specified order
+DEPENDENCIES:    
+VERSION:        1.0
+AUTHOR:         Matt Petrowsky
+NOTES:
+
+=====================================================
+*/
+
+Let ([
+    var.list = FilterValues( order; values ); // Valid order based on supplied values (no need to use an order value if not in the values)
+    var.current = GetValue( var.list; 1 ); // Top value of the order list
+    var.remaining = Right( var.list; Length( var.list ) - Length( var.current ) - 1 ); // Remaining order values
+    var.found = FilterValues ( values ; var.current ); // Found value according to order list
+    var.count = ValueCount( var.found ); // Count of found value (if found - see test below)
+    var.values = Substitute( values; var.current; ""); // Knocks out the found value
+    
+    // The above could be cleaned up to include returns to catch for duplicate values
+    // such as "script names" and "scripts" where "script" will catch both
+    
+    continue = ValueCount( var.list ) ≠ 0 // Exit condition for recursion
+];
+    
+    // Outer left and Substitute remove double returns - this could be handled better
+    
+    Left(
+        Substitute(
+            If ( continue; If ( var.count; var.found & list.sort.defined( var.values; var.remaining  ) ) ) &  If ( not continue; Substitute ( var.values ; "¶¶" ; ¶ ) );
+            "¶¶"; ¶
+        )
+    ; Length( values ) )
+
+)

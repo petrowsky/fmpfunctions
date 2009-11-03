@@ -1,0 +1,17 @@
+/*
+=====================================================
+layout.objects ()
+
+RETURNS:    (string) Return delimited list of layout object names.
+DEPS:       
+NOTES:      none
+=====================================================
+*/
+
+Substitute (
+  LayoutObjectNames ( Get( FileName ) ; Get( LayoutName ) ) ;
+  [ ">¶" ; "" ] ;
+  [ "<¶" ; "" ] ;
+  [ "¶>" ; "" ] ;
+  [ "¶<" ; "" ]
+)

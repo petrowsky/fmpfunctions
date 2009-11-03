@@ -1,0 +1,11 @@
+/*
+=====================================================
+script.result( )
+
+RETURNS:    (mixed) FileMaker's internal ScriptResult function
+DEPS:       none
+NOTES:
+=====================================================
+*/
+
+Get ( ScriptResult )

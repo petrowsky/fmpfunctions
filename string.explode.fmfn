@@ -1,0 +1,15 @@
+/*
+=====================================================
+string.explode ( string ; delimiter )
+
+RETURNS:        (list) of text values.
+DEPENDENCIES:   none 
+NOTES:
+=====================================================
+
+A simple text parsing function designed to break a delimited
+string on the supplied delimiter.
+
+*/
+
+Substitute ( string ; delimiter ; ¶ )

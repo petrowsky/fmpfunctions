@@ -1,0 +1,22 @@
+/*
+ * =====================================================
+ * calc.eval( calc )
+ * RETURNS:        (bool) True or False based on proper evaluation
+ * DEPENDENCIES:   none 
+ * NOTES:          see var.eval for declaring multiple variables
+ * =====================================================
+ * 
+ * This custom function is a wrapper for the
+ * assignment(creation) of global variables.
+ */
+
+Let (
+ $$ERROR.CALC.EVAL = ""; // Reset the global error variable for evaluation
+    If (
+        Evaluate( 
+            calc        
+        ) = "?";
+        Let ( $$ERROR.CALC.EVAL = "EVAL ERROR¶-----¶" & calc; False );
+        True
+    )
+)

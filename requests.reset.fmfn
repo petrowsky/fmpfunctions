@@ -1,0 +1,12 @@
+/*
+ * =====================================================
+ * requests.reset ( layout )
+ * 
+ * RETURNS:        (bool) Success or failure of reset
+ * DEPENDENCIES:   none 
+ * NOTES:          
+ * =====================================================
+ * 
+*/
+
+If ( Evaluate ( "Let ( $$" & layout & ".requests = \"\"; False )" ) = "?"; False; True )

@@ -1,0 +1,37 @@
+/*
+=====================================================
+window.activetab( init; theList )
+
+RETURNS:    (list) List of all active frontmost tabs.
+DEPS:       none
+NOTES:      Original by Koen Van Hulle (SHpartners.com)
+=====================================================
+*/
+
+Let([ 
+//------------------------- VARIABLES
+Init = Init + 1 ; 
+
+ObjectList = LayoutObjectNames( Get( FileName ); Get( LayoutName ) ) ; 
+
+TabToCheck = Substitute( GetValue( ObjectList; init ); ¶; "") ; 
+
+ParentTab = GetLayoutObjectAttribute( TabToCheck; "enclosingObject" ) ; 
+
+IsCurrentTab = Case(
+                    IsEmpty( TabToCheck );  0;
+                    GetLayoutObjectAttribute( TabToCheck ; "isFrontTabPanel" ) and
+                        IsEmpty( ParentTab ); 1;
+                    GetLayoutObjectAttribute( TabToCheck; "isFrontTabPanel" ) and
+                        PatternCount( ¶ & theList & ¶; ¶ &  ParentTab & ¶ ); 1;
+                    0 ); 
+
+theList = theList & If( IsCurrentTab; TabToCheck & ¶ ) 
+
+];
+
+//------------------------- RESULT
+
+If( not IsEmpty( TabToCheck ); window.activetab( init; theList ); theList ) 
+
+)

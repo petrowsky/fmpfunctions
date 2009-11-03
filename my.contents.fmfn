@@ -1,0 +1,11 @@
+/*
+=====================================================
+my.contents( name )
+
+RETURNS:    (string) current layout object contents
+DEPS:       none
+NOTES:      
+=====================================================
+*/
+
+GetLayoutObjectAttribute ( name ; "content" )

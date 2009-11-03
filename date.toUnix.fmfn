@@ -1,0 +1,16 @@
+// UnixTime( current_timestamp ; time_zone )
+
+/*
+Returns the local time as a unix time stamp
+Specify the local time zone only if you want the time in GMT
+*/
+
+Let( [
+$time = If( current_timestamp = "" or current_timestamp = "now"; Get( CurrentTimeStamp ) ;  GetAsTimestamp ( current_timestamp ));
+$unix = GetAsNumber(  $time  ) - GetAsNumber( GetAsTimestamp(Date(1;1;1970) ) );
+$offset = time_zone * 3600
+];
+
+$unix - $offset
+
+)

@@ -1,0 +1,22 @@
+/*
+=====================================================
+script.parameters( style )
+
+RETURNS:        (mixed) structured format of script parameters.
+DEPENDENCIES:   string.explode, var.eval, script.parameters.assign 
+NOTES:
+=====================================================
+
+A wrapper function for supporting multiple styles of passing
+script parameters into a script.
+*/
+
+Case(
+  style = "single";   Get ( ScriptParameter );
+  style = "piped";    string.explode ( Get ( ScriptParameter ) ; "|" );
+  style = "let";      var.eval ( Get ( ScriptParameter ) );
+  style = "assign";   script.parameters.assign();
+  style = "xml";      "Not implemented yet";
+
+  False
+)

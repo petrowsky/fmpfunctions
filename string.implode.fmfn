@@ -1,0 +1,15 @@
+/*
+=====================================================
+string.implode ( values ; delimiter )
+
+RETURNS:        (string) delimited by the delimiter.
+DEPENDENCIES:   none 
+NOTES:
+=====================================================
+
+A simple text function designed to delimit
+multiple values by the supplied delimiter.
+
+*/
+
+Substitute ( values ; ¶ ; delimiter )

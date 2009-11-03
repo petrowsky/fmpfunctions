@@ -1,0 +1,122 @@
+/*
+=====================================================
+script.parameters.assign (  )
+RETURNS:        (vars) Creates local script variables
+                based on the name of the script
+DEPENDENCIES:   script.param.get, script.param.set
+NOTES:          Compliments to Alexander Zueiv
+=====================================================
+by Alexander Zueiv
+October 1, 2006
+Adapted by Matt Petrowsky
+
+ABOUT: This function defines a local variable ($) for every
+parameter specified in the current script's name. To refer
+to any parameter within the script you only need to
+specify its name with a leading $. It also validates every
+"required" parameter for "not IsEmpty()" and returns "1" if
+all assignments succeeded.
+
+This function does not parse script parameters itself. It is
+a "wrapper" for your own custom parameter functions; it's
+supposed to call the custom function you currently use
+to get a parameter's value by its name. This should work
+well whatever method of sending parameters you currently
+use. FMP will show you where to put your function call when
+you click OK to save this function.
+
+Script name format:
+
+   Cool Script [ paramA ; ( paramB | paramC ) {; paramD } ]
+
+Script code sample:
+
+   If [ script.parameters.assign ]
+      Set Field [ Field1 ; $paramA ]
+      Set Field [ Field2 ; If ( IsEmpty ( $paramB ) ; $paramC ; $paramB ) ]
+      If [ not IsEmpty ( $paramD ) ]
+         Set Field [ Field3 ; $paramD ]
+      End If
+   Else
+      Show Custom Dialog [ Get ( ScriptName ) ; "Error! Some script parameter is missing." ]
+   End If
+
+This script will work only if ( paramA and ( paramB or paramC ) ) aren't empty, otherwise it will show
+the error message.
+
+To specify required validation logic for "alternative"
+parameters they must be enclosed in parentheses. The
+"optional" parameters section {} must appear at the end.
+
+*/
+//---------------------------------------------------------------------------------------//
+
+Let ( [
+
+// Adjust these variables to match your scripts naming style
+
+  VAR.BEGIN  = "[" ;   // beginning of parameters definition
+  VAR.BREAK  = ";" ;   // regular parameters separator (and)
+  VAR.ALT    = "|" ;   // alternative parameters separator (or)
+  VAR.OPTION = "{" ;   // beginning of optional parameters section
+  VAR.END    = "]" ;   // end of parameters definition
+
+  VAR.SCRIPT = Get ( ScriptName ) ;
+
+  VAR.PARAMS = Middle ( VAR.SCRIPT ;
+     Position ( VAR.SCRIPT ; VAR.BEGIN ; 1 ; 1 ) +1 ;
+     Position ( VAR.SCRIPT ; VAR.END ; Length ( VAR.SCRIPT ) ; -1 ) - Position ( VAR.SCRIPT ; VAR.BEGIN ; 1 ; 1 ) -1 )
+
+] ;
+
+Case (
+
+//---------------------------------------------------------------------------------------//
+
+$VAR.SCRIPT_PARAMETERS_COUNTER >= 1 ;
+
+  Let ( [
+
+    VAR.NAME = MiddleWords ( VAR.PARAMS ; $VAR.SCRIPT_PARAMETERS_COUNTER ; 1 ) ;
+    $VAR.SCRIPT_PARAMETERS_COUNTER = $VAR.SCRIPT_PARAMETERS_COUNTER - 1 ;
+
+    // Put your function call for getting script parameters here
+    
+    VAR.VALUE = script.param.get ( Get( ScriptParameter ); VAR.NAME )
+
+  ] ;
+
+    Evaluate ( "Let($" & VAR.NAME & "=" & Quote ( VAR.VALUE ) & ";\"\")" ) &
+
+    If ( $VAR.SCRIPT_PARAMETERS_COUNTER >= 1 ; script.parameters.assign ) // recursive call to this function
+
+  ) ; // End Let
+
+//---------------------------------------------------------------------------------------//
+
+WordCount ( VAR.PARAMS ) >= 1 ;
+
+  Let ( [
+
+    $VAR.SCRIPT_PARAMETERS_COUNTER = WordCount ( VAR.PARAMS ) ;
+    TEMP = script.parameters.assign ; // recursive call to this function
+    TEMP = Substitute ( VAR.PARAMS ; [ " " ; "" ] ; [ "$" ; "" ] ) ;
+    TEMP = If ( Position ( TEMP ; VAR.OPTION ; 1 ; 1 ) ; Left ( TEMP ; Position ( TEMP ; VAR.OPTION ; 1 ; 1 ) -1 ) ; TEMP ) ;
+    TEMP = If ( Left ( TEMP ; 1 ) = "(" ; "(not IsEmpty($" & Right ( TEMP ; Length ( TEMP ) -1 ) ; "not IsEmpty($" & TEMP ) ;
+    VAR.VALIDATION = Substitute ( TEMP ;
+       [ VAR.BREAK & "(" ; ") and (not IsEmpty($" ] ;
+       [ VAR.BREAK ; ") and not IsEmpty($" ] ;
+       [ VAR.ALT ; ") or not IsEmpty($" ] ) & ")" ;
+    VAR.RESULT = If ( VAR.VALIDATION = "not IsEmpty($)" ; 1 ; Evaluate ( VAR.VALIDATION ) )
+
+  ] ;
+
+    VAR.RESULT
+
+  ) // End Let
+
+//---------------------------------------------------------------------------------------//
+
+) // End Case
+
+) // End Let

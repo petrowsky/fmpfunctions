@@ -1,0 +1,30 @@
+/*
+ * =====================================================
+ * var.eval( contents )
+ * 
+ * RETURNS:        (bool) True or False based on proper evaluation
+ * DEPENDENCIES:   none 
+ * NOTES:          Try to always use the List() function when passing multiple values into var.eval!
+ * =====================================================
+ * 
+ * This custom function evaluates the contents passed as the
+ * variable declaration part of a Let function. Useful for
+ * defining global or locally scoped variables.
+ * 
+ */
+
+Let( [
+  $$ERROR.VAR.EVAL = ""; // Reset the global error variable for evaluation
+  var.semicolons_exist = ( ValueCount ( contents ) = PatternCount ( contents ; ";¶" ) ) or  ( ValueCount ( contents ) - 1 = PatternCount ( contents ; ";¶" ) );
+  var.contents = If ( not var.semicolons_exist ; Substitute ( contents ; ¶ ; ";¶") ; contents ); // Add semicolons if needed
+  var.trailing_semicolon = Right ( var.contents ; 1 ) = ";"; // Clean off the trailing semicolon if present
+  var.contents = If ( var.trailing_semicolon; Left ( var.contents ; Length( var.contents ) - 1 ); var.contents )
+];
+  If (
+      Evaluate( 
+          "Let ( [" & var.contents & "]; 1 )"        
+      ) = "?";
+      Let ( $$ERROR.VAR.EVAL = "EVAL ERROR¶-----¶" & var.contents; False );
+      True
+  )
+)

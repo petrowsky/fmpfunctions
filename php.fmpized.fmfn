@@ -1,0 +1,17 @@
+/*
+php.fmpized( contents )
+RETURNS:  (string) FMP compatible string of a php script
+
+Can be used to store a php script within a variable or calculation
+*/
+
+"\"" &
+
+Substitute ( 
+script;
+["\\"; "\\\\"];
+["\""; "\\\""];
+["\¶"; "\\\¶"];
+[ ¶; "\¶"] ) &
+
+"\""

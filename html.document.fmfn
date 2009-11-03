@@ -1,0 +1,26 @@
+/*
+=====================================================
+html.document ( type; head; css; body )
+
+RETURNS:    (string) HTML document with supplied parts
+DEPS:       none
+NOTES:      
+=====================================================
+*/
+
+List(
+  Case(
+  type = "html4t" ; "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\">";
+  type = "xhtmlt" ; "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\">";
+  "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\">"
+  );
+  "<html>";
+  "<head>";
+  head;
+  css;
+  "</head>";
+  "<body>";
+  body;
+  "</body>";
+  "</html>"
+)

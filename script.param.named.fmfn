@@ -1,0 +1,22 @@
+/*
+=====================================================
+script.param.named( keys; values)
+
+RETURNS:    (mixed) the value associated to the supplied key in positional order
+DEPS:       script.param.set
+=====================================================
+*/
+Let (
+[
+_Compliments  = ValueCount ( keys ) = ValueCount ( values );
+_NotEmpty     = not IsEmpty( keys ) and not IsEmpty( values )
+];
+
+  If ( _Compliments and _NotEmpty ;
+  
+    script.param.set ( GetValue ( keys ; 1 ) ; GetValue ( values ; 1 ) ) & script.param.named ( MiddleValues ( keys ; 2 ; 1000000 ) ; MiddleValues ( values ; 2 ; 1000000 ) );
+    _
+
+  )
+
+)

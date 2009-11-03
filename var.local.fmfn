@@ -1,0 +1,14 @@
+/*
+var.local( name ; value )
+RETURNS:  (bool) Whether the variable was created or not
+
+This custom function is a wrapper for the assignment(creation) of local variables.
+If the variable cannot be created or is empty then false is returned. Otherwise
+it was created.
+*/
+
+If (
+	Evaluate( "Let ( $" & name & " = " & Quote ( value ) & "; \"\" )" ) = "?"
+	; 0
+	; not IsEmpty( Evaluate( "$" & name ))
+	)

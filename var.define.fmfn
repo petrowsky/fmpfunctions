@@ -1,0 +1,25 @@
+/*
+ * =====================================================
+ * var.define( name ; value )
+ * RETURNS:        (bool) True or False based on proper evaluation
+ * DEPENDENCIES:   none 
+ * NOTES:          see var.eval for declaring multiple variables
+ * =====================================================
+ * 
+ * This custom function is a wrapper for the
+ * assignment(creation) of global variables.
+ */
+
+Let ( [
+ $$ERROR.VAR.DEFINE = ""; // Reset the global error variable for evaluation
+ var.calc = "Let ( $$" & name & " = " & Quote ( value ) & "; False )"
+];
+    If (
+        Evaluate( 
+            var.calc        
+        ) = "?";
+        Let ( $$ERROR.VAR.DEFINE = "EVAL ERROR¶-----¶" & var.calc; False );
+        // Insert the name of the variable into the reserved $$VARIABLES global variable
+        Let ( $$VARIABLES = If ( IsEmpty ( FilterValues ( $$VARIABLES ; name ) ); List ( $$VARIABLES ; name ) ; $$VARIABLES ) ; True )
+    )
+)

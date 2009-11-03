@@ -1,0 +1,67 @@
+/* FilterList ( ListA ; Attribute ; ListB ; CaseSensitive ) .v2.0
+FilterList () requires CustomList ( Start ; End ; Function )*/
+
+// Limited => ListA < 18700 values and ListB < 18700 values too
+// Attributes : Equals - NotEquals - Contains - NotContains - BeginsWith - NotBeginsWith - EndsWith - NotEndsWith
+// Optional parameters : CaseSensitive : Boolean
+
+// Result
+/* --------- CaseSensitive = empty or 0
+FilterList ( "One¶Two¶three¶Four¶five" ; "Equals" ; "One¶four" ; "" or 0 ) => "One¶Four"
+FilterList ( "One¶Two¶three¶Four¶five" ; "NotEquals" ; "One¶four" ; "" or 0 ) => "Two¶three¶five"
+FilterList ( "One¶Two¶three¶Four¶five" ; "Contains" ; "O¶t" ; "" or 0 ) => "One¶Two¶three¶Four"
+FilterList ( "One¶Two¶three¶Four¶five" ; "NotContains" ; "O¶t" ; "" or 0 ) => "five"
+FilterList ( "One¶Two¶three¶Four¶five" ; "BeginsWith" ; "F¶t" ; "" or 0 ) => "Two¶three¶Four¶five"
+FilterList ( "One¶Two¶three¶Four¶five" ; "NotBeginsWith" ; "F¶t" ; "" or 0 ) => "One"
+FilterList ( "One¶Two¶three¶Four¶five" ; "EndsWith" ; "o¶E" ; "" or 0 ) => "One¶Two¶three¶five"
+FilterList ( "One¶Two¶three¶Four¶five" ; "NotEndsWith" ; "o¶E" ; "" or 0 ) => "Four"
+
+*/
+/* --------- CaseSensitive = 1
+FilterList ( "One¶Two¶three¶Four¶five" ; "Equals" ; "One¶four" ; 1 ) => "One"
+FilterList ( "One¶Two¶three¶Four¶five" ; "NotEquals" ; "One¶four" ; 1 ) => "Two¶three¶Four¶five"
+FilterList ( "One¶Two¶three¶Four¶five" ; "Contains" ; "O¶t" ; 1 ) => "One¶three"
+FilterList ( "One¶Two¶three¶Four¶five" ; "NotContains" ; "O¶t" ; 1 ) => "Two¶Four¶five"
+FilterList ( "One¶Two¶three¶Four¶five" ; "BeginsWith" ; "F¶t" ; 1 ) => "three¶Four"
+FilterList ( "One¶Two¶three¶Four¶five" ; "NotBeginsWith" ; "F¶t" ; 1 ) => "One¶Two¶five"
+FilterList ( "One¶Two¶three¶Four¶five" ; "EndsWith" ; "o¶E" ; 1 ) => "Two"
+FilterList ( "One¶Two¶three¶Four¶five" ; "NotEndsWith" ; "o¶E" ; 1 ) => "One¶three¶Four¶five"
+*/
+
+//-------------------------------------------------------------------*/
+// Agnès Barouh - Juillet 2007 - To report bugs : : barouh.agnes@wanadoo.fr
+//-------------------------------------------------------------------*/
+
+Case (
+    ValueCount ( ListA ) > 18700 or ValueCount ( ListB ) > 18700 ; "Too many Values" ;
+    IsEmpty ( ListA ) ; "" ;
+    IsEmpty ( ListB ) ; ListA ;
+    IsEmpty ( Attribute ) ; "Missing Attribute" ;
+    IsEmpty ( FilterValues ( Attribute ; "Equals¶NotEquals¶Contains¶NotContains¶BeginsWith¶NotBeginsWith¶EndsWith¶NotEndsWith" ) ) ; "Incorrect attribute" ;
+    not ( CaseSensitive = 1 or ( GetAsNumber ( CaseSensitive + 0 ) = 0 ) ) ; "Incorrect CaseSensitive" ;
+    Attribute = "Equals" and CaseSensitive < 1 ; Substitute ( FilterValues ( ListA ; ListB ) & "#|#" ; ["¶#|#" ; "" ]; ["#|#" ; "" ]) ;
+
+    Let ([
+
+            $TagB = Case ( IsEmpty ( FilterValues ( Attribute ; "Equals¶NotEquals¶BeginsWith¶NotBeginsWith" ) ) ; "" ; "#|#" ) ;
+            $TagE = Case ( IsEmpty ( FilterValues ( Attribute ; "Equals¶NotEquals¶EndsWith¶NotEndsWith" ) ) ; "" ; "#|#" ) ;
+
+            $MyFirstList = ListA ;
+            $MyList = "[#|#]" & $TagB & Substitute ( Choose ( CaseSensitive ; Upper ( $MyFirstList ) ; $MyFirstList ) ; [ ¶ ; $TagE & ¶ & "[#|#]" & $TagB ] ) & $TagE ;
+            $Values = Choose ( CaseSensitive ; Upper ( ListB ) ; ListB ) ;
+
+            Trigger = CustomList ( 1 ; ValueCount ( ListB ) ;
+    "Let ([Value = GetValue ( $Values ; [n] ) ; $MyList = case ( Not IsEmpty ( value ) ; Substitute ( $MyList ; $TagB & Value & $TagE ; \"X##X\" ) ; $MyList ) ] ; \"\" )" ) ;
+
+            $MyList = Substitute ( $MyList ; [ "[#|#]"; "" ] ; [ "#|#"; "" ] ) ;
+            $Test = Case ( Left ( Attribute ; 3 ) = "Not" ; "<1" ; ">0")
+        ];
+
+    Case (
+        CaseSensitive < 1 and Left ( Attribute ; 3 ) = "Not" ; Substitute ( FilterValues ( $MyFirstList ; $MyList ) & "#|#" ; ["¶#|#" ; "" ] ; ["#|#" ; "" ]) ;
+
+        CustomList ( 1 ; ValueCount ( $MyList ) ;
+            "Let ([ Value = GetValue ( $MyList ; [n] ) ]; Case ( PatternCount ( Value ; \"X##X\")" & $Test & " ; GetValue ( $MyFirstList ; [n] )))" )
+        )
+    )
+) & Let( [ $MyFirstList = "" ; $MyList = "" ; $Values = ""] ; "" )

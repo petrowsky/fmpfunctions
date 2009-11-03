@@ -1,0 +1,12 @@
+/*
+=====================================================
+my.name()
+
+RETURNS:    (string) current layout object name
+DEPS:       none
+NOTES:      
+=====================================================
+*/
+
+
+Get ( ActiveLayoutObjectName )

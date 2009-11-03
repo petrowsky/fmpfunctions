@@ -1,0 +1,39 @@
+/*
+ * =====================================================
+ * vars.save( valuelist )
+ * RETURNS:        (string) Return delimted list of valid variable declarations
+ * DEPENDENCIES:   none 
+ * NOTES:          see var.define for how/where variables are saved
+ * =====================================================
+ * 
+ */
+
+Let ( [
+  //$$var.test = "example data";
+  //valuelist = "one¶two¶three"; // used for testing
+  var.topmost_value = GetValue ( valuelist ; 1 );
+  var.remaining_values = If ( ValueCount ( valuelist ) = 1 ; "" ;
+                            // Stupid xValues functions return a \r
+                            Substitute( RightValues ( valuelist ; ValueCount ( valuelist ) - 1 ) & ¶ ; "¶¶" ; "" )
+                            );
+  var.value = Evaluate ( "$$" & var.topmost_value );
+  var.value = If ( var.value ≠ "?" ; var.value ; "ERROR" );
+  var.string = "$$" & var.topmost_value & " = " & Quote ( var.value );
+  $variables.save = List ( $variables.save ; var.string )
+];
+
+  If ( isempty ( var.remaining_values ) ; $variables.save ; vars.save ( var.remaining_values ) )
+  
+)
+
+/*
+// Testing code
+Let( [
+  $variables.save = "";
+  $$one = 1;
+  $$two = 2;
+  $$three = 3
+];
+  vars.save ( List ( "one" ; "two" ; "three" ) )
+)
+*/

@@ -1,0 +1,11 @@
+/*
+=====================================================
+file.hosted()
+
+RETURNS:    (bool) Whether the file is hosted or local.
+DEPS:       None
+NOTES:      
+=====================================================
+*/
+
+If( Left( Get( FilePath ); 6) = "fmnet:"; True; False)

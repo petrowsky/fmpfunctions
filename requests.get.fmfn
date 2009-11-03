@@ -1,0 +1,16 @@
+/*
+ * =====================================================
+ * requests.get ( layout )
+ * 
+ * RETURNS:        (string) Return delimited list of request strings
+ * DEPENDENCIES:   none 
+ * NOTES:          
+ * =====================================================
+ * 
+ * Intended use is for extracting a return delimited list of
+ * fieldname/value pairs from a global variable with the
+ * same name as the layout.
+ * 
+*/
+
+If ( Evaluate ( "$$" & layout & ".requests" ) = "?"; False; Evaluate ( "$$" & layout & ".requests" ) )

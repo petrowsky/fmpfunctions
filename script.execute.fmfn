@@ -1,0 +1,84 @@
+/*
+ * =====================================================
+ * script.execute( method; file; script; parameter; control )
+ * 
+ * RETURNS:    (bool) Result of the execution of a script.
+ * DEPS:       At least one Script triggering plugin.
+ *             Supported are SmartPill PHP plugin, zippScript & DoScript
+ * NOTES:
+ * =====================================================
+*/
+
+If ( Get ( WindowMode ) = 0;
+    Let([
+        //------------------------- VARIABLES
+    
+        _Default = "sm"; // Set your default script plugin here
+    
+        _File = If (IsEmpty(file); Get(FileName); file);
+        _Control = If (IsEmpty(control); "pause"; control);
+        method = If (IsEmpty(method); _Default; method);
+        
+        _Error = Case(
+
+            method = "zipp"; Get ( ScriptName ) = script or Let ( [ _Result = zippScript_PerformScript( _File; script; parameter; _Control );
+              $$SCRIPT.TEXT = Case(
+                                    _Result = "" ; "" ;
+                                    _Result = "$$-1" ; "Incorrect number of parameters" ;
+                                    _Result = "$$-2" ; "Unknown control parameter code" ;
+                                    _Result = "$$100" ; "File is missing (named file not open)" ;
+                                    _Result = "$$104" ; "Script is missing (no script of that name)")
+              ]; "" );
+            
+            method = "dosc"; Get ( ScriptName ) = script or mFMb_DoScript( script ; _File ; parameter ; _Control  ) & mFMb_DS_LastErrNum;
+            
+            method = "sm"; Get ( ScriptName ) = script
+
+                or
+
+                EvaluateGroovy(
+                    Substitute (
+                                "fmpro.performScript( ':file', ':script', \":parameter\" )";
+                                    [":file"; Get( FileName )];
+                                    [":script"; script];
+                                    [":parameter"; Substitute ( parameter; ["\""; "\\\""]; [ ¶; "\r"]; [ "$"; "\$"] )]
+                                )
+                );
+            
+            method = "php";
+            
+                Let([ 
+                //------------------------- VARIABLES
+                _Control = If ( IsEmpty (control);
+                			3; // 3 is the value used by fm_perform_script for pause
+                			Let( val = Left( control; 4); Int( Position ( "halt exit resu paus " ; val ; 1 ; 1 ) / 5 ) )  );
+								
+                _PHPCode = "print fm_perform_script("
+                			& Quote( _File ) & ", "
+                			& Quote( script ) & ", "
+                			& Quote( parameter ) & ", "
+                			& _Control &
+                			");";
+						
+                $$SCRIPT_RESULT =  Get ( ScriptName ) = script or PHP_Execute( _PHPCode )
+
+                ];
+                //------------------------- RESULT
+
+                0 // I haven't put error trapping in yet. :(
+
+                );
+    
+            0
+        )
+        ];
+        
+        If ( _Error; 
+            Let( $$SCRIPT.ERROR = _Error; 1 )
+        )
+        
+    )
+)
+
+// Thanks Koen Van Hulle for the window mode suggestion
+// Thanks Peter Wagemans for the "aha" in logic for testing for the name of the currently running script and the error trapping

@@ -1,0 +1,16 @@
+/*
+ * =====================================================
+ * tab.save ( level )
+ * RETURNS:        (bool) True or False based if tab was saved to global layout variable
+ * DEPENDENCIES:   window.activetab & list.swapValue 
+ * NOTES:          none
+ * =====================================================
+ * 
+ */
+ 
+Let ( [
+    var.tabname = GetValue ( window.activetab ( 0 ; "" ) ; level );
+    var.variable = Get ( LayoutName ) & ".tabs";
+];
+    var.define ( var.variable ; list.swapValue ( Evaluate ( "$$" & var.variable ) ; var.tabname ; level ) )
+)
