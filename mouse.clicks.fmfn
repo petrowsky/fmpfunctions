@@ -1,25 +1,27 @@
 /*
-=====================================================
-mouse.clicks ( number )
-RETURNS:        (bool) If mouse has been clicked the number of times
-                as tracked by the global variable $$mouse.clicks.count
-DEPENDENCIES:   none
-NOTES:          
-=====================================================
-
-WARNING! You can only use a call to this custom function once within any given script.
-Subsequent calls within the same script will mess up the variables.
-*/
+ * =====================================================
+ * mouse.clicks ( number ; identifier )
+ * RETURNS:        (bool) If mouse has been clicked the number of times
+ *                 as tracked by the global variable $$mouse.clicks.count
+ * DEPENDENCIES:   none
+ * NOTES:          
+ * =====================================================
+ * 
+ * WARNING! You can only use a call to this custom function once within any given script.
+ * Subsequent calls within the same script will mess up the variables.
+ */
 
 Let ( [
-$$mouse.clicks.count = If ( IsEmpty( $$mouse.clicks.count ) ; 2 ; $$mouse.clicks.count + 1 );
-$$mouse.clicks.previous = $$mouse.clicks.last;
-$$mouse.clicks.last = Get ( CurrentTimeStamp );
-$$mouse.clicks.duration = Seconds ( $$mouse.clicks.last - $$mouse.clicks.previous );
-$$mouse.clicks.valid = $$mouse.clicks.duration ≤ 1; // Subsequent click within 1 second
-$$mouse.clicks.count = If ( not $$mouse.clicks.valid ; "" ; $$mouse.clicks.count )
+  $$mouse.clicks.count = If ( IsEmpty( $$mouse.clicks.count ) ; 1 ; $$mouse.clicks.count + 1 );
+  $$mouse.clicks.previous = $$mouse.clicks.last;
+  $$mouse.clicks.last = Get ( CurrentTimeStamp );
+  $$mouse.clicks.duration = Seconds ( $$mouse.clicks.last - $$mouse.clicks.previous );
+  // Criteria required to be a valid subsequent click, identifier must match
+  $$mouse.clicks.valid = $$mouse.clicks.duration ≤ 1 and identifier = $$mouse.click.identifier; // Subsequent click within 1 second
+  $$mouse.clicks.count = If ( not $$mouse.clicks.valid ; "" ; $$mouse.clicks.count );
+  $$mouse.click.identifier = identifier
 ];
 
-$$mouse.clicks.count = number
+  $$mouse.clicks.count = number // Return the count as boolean
 
 )
