@@ -1,12 +1,12 @@
 /*
-=====================================================
-keycode.istype( type )
-
-RETURNS:    (boolean) Whether the keystoke used is within the specified type
-DEPS:       none
-NOTES:      
-=====================================================
-*/
+ * =====================================================
+ * keycode.istype( type )
+ * 
+ * RETURNS:    (boolean) Whether the keystoke used is within the specified type
+ * DEPS:       none
+ * NOTES:      
+ * =====================================================
+ */
 
 Let (
 [

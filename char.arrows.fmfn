@@ -19,6 +19,7 @@ Let ( [
                   var.direction = "r"; char ( 9654 ); //"▶";
                 )
 ];
+  // Result
   TextFont ( var.arrow ; If ( Get( SystemPlatform ) = -2 ; "Arial" ; "Apple Symbol Regular" ) )
 
 )

@@ -1,17 +1,17 @@
 /*
-=====================================================
-string.trim( text; characters )
-
-RETURNS:        (string) original string less supplied list of values
-PARAMS:         text = string; characters = List()
-DEPENDENCIES:   none
-VERSION:        1.0
-AUTHOR:         See notes
-NOTES:
-Adapted by Matt Petrowsky from
-http://www.briandunning.com/cf/904
-Compliments to Debi Fuchs, Aptworks Consulting
-=====================================================
+ * =====================================================
+ * string.trim( text; characters )
+ * 
+ * RETURNS:        (string) original string less supplied list of values
+ * PARAMS:         text = string; characters = List()
+ * DEPENDENCIES:   none
+ * VERSION:        1.0
+ * AUTHOR:         See notes
+ * NOTES:
+ * Adapted by Matt Petrowsky from
+ * http://www.briandunning.com/cf/904
+ * Compliments to Debi Fuchs, Aptworks Consulting
+ * =====================================================
 */
 
 Let([

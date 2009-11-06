@@ -1,12 +1,14 @@
 /*
-=====================================================
-layout.objects ()
-
-RETURNS:    (string) Return delimited list of layout object names.
-DEPS:       
-NOTES:      none
-=====================================================
-*/
+ * =====================================================
+ * layout.objects ()
+ * 
+ * RETURNS:       (string)
+ *                Return delimited list of layout objects
+ *                from the current layout.
+ * DEPENDENCIES:  none   
+ * NOTES:         none
+ * =====================================================
+ */
 
 Substitute (
   LayoutObjectNames ( Get( FileName ) ; Get( LayoutName ) ) ;
