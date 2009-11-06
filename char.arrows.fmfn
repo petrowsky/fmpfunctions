@@ -1,0 +1,24 @@
+/*
+ * =====================================================
+ * char.arrows ( direction )
+ * 
+ * RETURNS:        (string) Unicode arrow character
+ * PARAMS:         direction = (enum) up, down, left, right
+ * DEPENDENCIES:   none
+ * AUTHOR:         Matt Petrowsky
+ * NOTES:
+ * =====================================================
+*/
+
+Let ( [
+  var.direction = Left ( direction ; 1 );
+  var.arrow = Case (
+                  var.direction = "u"; char ( 9650 ); //"▲";
+                  var.direction = "d"; char ( 9660 ); //"▼";
+                  var.direction = "l"; char ( 9664 ); //"◀";
+                  var.direction = "r"; char ( 9654 ); //"▶";
+                )
+];
+  TextFont ( var.arrow ; If ( Get( SystemPlatform ) = -2 ; "Arial" ; "Apple Symbol Regular" ) )
+
+)
