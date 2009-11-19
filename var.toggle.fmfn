@@ -1,0 +1,14 @@
+/*
+ * =====================================================
+ * var.toggle( value )
+ * 
+ * RETURNS:        (bool) True or False based on contents of value
+ * DEPENDENCIES:   none 
+ * NOTES:          none
+ * =====================================================
+ * 
+ */
+ 
+not GetAsBoolean ( value )
+
+// Special thanks to Rob Poelking for the suggestion
