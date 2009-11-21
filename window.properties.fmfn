@@ -1,28 +1,48 @@
-/*
-window.properties ( method )
-RETURNS:  Window settings of top, left, width, height where method controls what is returned
-DEPS: script.param.named, script.param.let
-*/
+ /*
+  * =====================================================
+  * window.properties ( method )
+  * 
+  * RETURNS:       (string) window properties according to specified method
+  * PARAMETERS:    method = (enum)
+  * DEPENDENCIES:  var.list() and object.id()
+  * NOTES:         Provides multiple methods for returning the
+  *                properties of the current window
+  * =====================================================
+  *
+  */
 
-Let (
-[
-_WindowNames = List( "top";"left";"width";"height");
-_WindowProperties = List( Get ( WindowTop ) ; Get ( WindowLeft ) ; Get ( WindowWidth ) ; Get ( WindowHeight ) )
+Let ( [
+  var.keys = List( "name"; "layout"; "id"; "top";"left";"width";"height");
+  var.values = List(
+                    Get ( WindowName );
+                    Get ( LayoutName );
+                    object.id ( Get ( LayoutName ); "Layout"; ""; "" );
+                    Get ( WindowTop );
+                    Get ( WindowLeft );
+                    Get ( WindowWidth );
+                    Get ( WindowHeight )
+                    )
 ];
-
+  // returns
   Case(
-  method = "" or
-  method = "standard" ; _WindowProperties;
+    method = "" or
+    method = "default"; var.values;
   
-  method = "piped" ; Substitute ( _WindowProperties ; ¶ ; "|" );
-
-  method = "named" ; script.param.named ( _WindowNames ; _WindowProperties );
-  
-  method = "let" ; script.param.let( _WindowNames; _WindowProperties );
+    method = "piped"; Substitute ( var.values ; ¶ ; "|" );
+    
+    // global variables are returned by var.list() - use Substitute ( properties ; "$$" ; "$" ) to make local
+    method = "let"; var.list ( var.keys; 
+                         List(
+                           Quote ( Get ( WindowName ) ); // because var.list needs quoted strings
+                           Quote ( Get ( LayoutName ) );
+                           object.id ( Get ( LayoutName ); "Layout"; ""; "" );
+                           Get ( WindowTop );
+                           Get ( WindowLeft );
+                           Get ( WindowWidth );
+                           Get ( WindowHeight )
+                         ) ; "global" );
 
   // default
-
-  _WindowProperties
-
+  var.values
   )
 )
