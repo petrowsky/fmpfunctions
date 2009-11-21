@@ -1,0 +1,48 @@
+/*
+ * =====================================================
+ * var.list ( keys; values; scope )
+ * 
+ * RETURNS:       (string) key/value pairs as $key = value in positional order
+ * PARAMETERS:    keys = List() of key names
+ *                values = List() of values
+ *                scope = (enum) global, local
+ * DEPENDENCIES:  none
+ * ABOUT:         Takes two compliment set of lists
+ *                and turns them into FMP defined variables
+ * NOTES:         Use FileMaker's Quote() function when passing
+ *                in string values - otherwise numeric are fine!
+ * =====================================================
+ *
+ */
+ 
+Let ( [
+  singleValue = ValueCount ( keys ) = 1 and ValueCount ( values ) = 1; // only one key/value pair
+  isValid  = ValueCount ( keys ) = ValueCount ( values ); // both lists have the same number of values
+  notEmpty = not IsEmpty( keys ) and not IsEmpty ( values ); // lists aren't empty
+  varString = If ( scope = "global" ; "$$" ; "$" ) & GetValue ( keys ; 1 )  & " = " & GetValue ( values ; 1 ) & If ( ValueCount( keys ) = 1; "" ; ";¶" )
+];
+  Case (
+    singleValue ;
+      varString;
+    isValid and notEmpty ;
+      varString &
+      var.list ( MiddleValues ( keys ; 2 ; 1000000 ) ; MiddleValues ( values ; 2 ; 1000000 ) ; scope );
+    // default
+    "Lists don't match in length - use the Quote() function around string values"
+  )
+)
+
+/*
+// Testing code
+var.list (
+  List(
+    "foo";
+    "bar"
+  )
+;
+  List(
+    Quote("single value");
+    Quote("multiple¶values")
+  )
+; "local" )
+*/
