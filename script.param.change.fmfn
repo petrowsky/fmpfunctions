@@ -1,0 +1,36 @@
+/*
+ * =====================================================
+ * script.param.change( values; changes)
+ * 
+ * RETURNS:        (mixed) new key/value list based on changes
+ * DEPENDENCIES:   none
+ * NOTES:          Compliments to Mikhail Edoshin http://mikhailedoshin.com
+ * =====================================================
+ * 
+ * This function is used to replace a named value within a
+ * data structure which preserves carriage returns and
+ * other special characters.
+ *
+ */
+
+Case(
+  // Both values are required to swap, otherwise use whatever we have
+  IsEmpty( values ); changes;
+  IsEmpty( changes ); values;
+  
+  // Recursion on stack
+  ValueCount( changes ) > 1;
+    script.param.change( script.param.change( values; LeftValues( changes; 1 ) ); 
+      RightValues( changes; ValueCount( changes ) - 1 ) );
+
+  // Swap out the key/value if found
+  Let( [
+    var.key = MiddleValues( Substitute( changes; [ "¶"; "" ]; [ ".^^"; "¶" ]; [ ".^"; "^" ] ); 2; 1 );
+    var.optionPosition = ValueCount( Left( values; Position( "¶" & values; "¶.^^" & Left( var.key; Length( var.key ) - 1 ) & ".^^"; 1; 1 ) ) ) ];
+
+    If( var.optionPosition = 0; values & changes;
+      LeftValues( values; var.optionPosition - 1 )
+        & changes
+        & RightValues( values; ValueCount( values ) - var.optionPosition ) )
+  )
+)
