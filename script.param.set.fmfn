@@ -1,23 +1,29 @@
 /*
-=====================================================
-script.param.set( key; value)
-
-RETURNS:        (string) keyed pair of values
-DEPENDENCIES:   none
-NOTES:          Compliments to Mikhail Edoshin http://edoshin.typepad.com/
-=====================================================
-
-This function is used to encapsulate a named value from a
-data structure which preserves carriage returns and
-other special characters.
-*/
+ * =====================================================
+ * script.param.set( key; value)
+ * 
+ * RETURNS:        (string) keyed pair of values
+ * DEPENDENCIES:   none
+ * NOTES:          Compliments to Mikhail Edoshin http://mikhailedoshin.com
+ * =====================================================
+ * 
+ * This function is used to encapsulate a named value from a
+ * data structure which preserves carriage returns and
+ * other special characters.
+ * 
+ */
 
 Substitute( "¶" 
   & Substitute( key;
                 [ "^"; ".^" ];
-                [ "¶"; ".^^" ] ) & "¶" 
+                [ "¶"; ".^^" ]
+    ) & "¶" 
   & Substitute( value;
                 [ "^"; ".^" ];
-                [ "¶"; ".^^" ] ) & "¶";
-  [ "^"; ".^" ]; [ "¶"; ".^^" ]
+                [ "¶"; ".^^" ]
+    ) & "¶";
+  
+  [ "^"; ".^" ];
+  [ "¶"; ".^^" ]
+
 ) & "¶"
