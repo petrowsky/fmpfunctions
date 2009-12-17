@@ -1,16 +1,17 @@
 /*
-=====================================================
-script.param.get( values; key)
-
-RETURNS:        (mixed) the value associated to the supplied key
-DEPENDENCIES:   none
-NOTES:          Compliments to Mikhail Edoshin http://edoshin.typepad.com/
-=====================================================
-
-This function is used to extract a named value from a
-data structure which preserves carriage returns and
-other special characters.
-*/
+ * =====================================================
+ * script.param.get( values; key)
+ * 
+ * RETURNS:        (mixed) the value associated to the supplied key
+ * DEPENDENCIES:   none
+ * NOTES:          Compliments to Mikhail Edoshin http://mikhailedoshin.com
+ * =====================================================
+ * 
+ * This function is used to extract a named value from a
+ * data structure which preserves carriage returns and
+ * other special characters.
+ *
+ */
 
 Case(
     IsEmpty( values ) or IsEmpty( key ); 
