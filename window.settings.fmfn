@@ -1,0 +1,550 @@
+/* 
+ * This is taken from the Window Controller field in Mikhail Edoshin's
+ * sample file.  http://mikhailedoshin.com/cookbook/window_controller/
+ * The intention is to convert this into a custom function which can
+ * be simply called without all of structure and setup.  Will need to
+ * be refactored.
+ */
+
+
+// Uses Set Contains()
+
+Case( True or globals_wc_alignment; /* Trigger */
+
+  Let( [
+  
+    /* Read environment settings. */
+  
+    on Mac = Get( SystemPlatform ) = 1 
+              or Get( SystemPlatform ) = -1;
+  
+    on Windows = Get( SystemPlatform ) = 2 
+                  or Get( SystemPlatform ) = -2;
+  
+    FileMaker version = GetAsNumber( Get( ApplicationVersion ) );
+  
+    /* Adjustments and preferences
+    
+    Under Windows FileMaker v9 or earlier may or may not
+    display the status bar (18 px) at the bottom of
+    FileMaker application window, but there's no function to
+    know its state and Get( WindowDesktopHeight ) and Get(
+    WindowDesktopWidth ) functions do not see that status
+    bar either. Since it's on by default, I assume it stays
+    on.
+    
+    FileMaker v10 doesn't have that status bar anymore. */
+  
+    status bar adjustment = Case( on Windows and FileMaker version < 10; -18 );
+  
+    /* FileMaker v9 or earlier have toolbars, but Get(
+    WindowDesktopHeight ) and Get( WindowDesktopWidth )
+    functions do not see them. Since users can move and
+    rearrange toolbars, there's no fixed size to account for
+    and what's below are the most likely settings: toolbars
+    are on and take a single row at the top (27 or 28px
+    depending on platform).
+    
+     In FileMaker v10 toolbars are no longer used. */
+
+    toolbar adjustment = Case( FileMaker version < 10; Case( on Mac; -27; on Windows; -28 ) );
+        
+    /* To prevent windows to open off screen this
+    calculation checks their coordinates and, if necessary,
+    alters them to make sure there's some minimal distance
+    (the safety margin) beween the window and screen edges.
+    A negative margin would allow a window to open slightly
+    off screen, but not more than the absolute value of the
+    margin.*/
+      
+    safety margin = 0;
+  
+    /* A window may be set to zoom down to fit on screen. In
+    this case controller starts with some initial zoom level
+    and then reduces it until the window fits the available
+    space. It may be desirable to scale the window to fit
+    not the whole space, but a somewhat smaller area, to
+    make the window more convenient to manipulate. To
+    support this the controller uses a scale margin, a
+    distance that is automatically subtracted from the
+    available space when calculating the scaled size. E.g.
+    if scale margin is 15, the controller will reduce the
+    available space by 30px from either dimension.
+    
+    Unlike safety margin, scale margin should not be
+    negative. Scale margin applies to scaling only; windows
+    with fixed size are not affected. */
+    
+    scale margin = 0;
+      
+    /* End of adjustments and preferences; all the rest is
+    automatic.
+    
+    Depending on which parameters are passed there could be
+    saved or default settings. */
+  
+    has saved settings =
+      IsValid( Window Settings::Window );
+  
+    has default size =
+      IsValid( Window Size::Name );
+  
+    has alignment =
+      IsValid( Window Alignment::Name );
+      
+    /* The default size may be specified not in pixels. */
+      
+    multiplier to px =
+      Case( has default size;
+        Let( unit =  Window Size::Unit;
+          Case(
+            unit = "px"; 1;
+            unit = "in"; 72;
+            unit = "cm"; 72 / 2.54 ) ) );
+  
+    /* Read content width and height. */
+  
+    content width =
+      Case(
+        not IsEmpty( script.parameter( "width" ) );
+          GetAsNumber( script.parameter( "width" ) );
+        has saved settings;
+          Window Settings::Width;
+        has default size;
+          Ceiling( Window Size::Width * multiplier to px );
+        // otherwise use current window's
+          Get( WindowContentWidth ) );
+  
+    content height =
+      Case(
+        not IsEmpty( script.parameter( "height" ) );
+          GetAsNumber( script.parameter( "height" ) ); 
+        has saved settings;
+          Window Settings::Height;
+        has default size;
+          Ceiling( Window Size::Height * multiplier to px );
+        // otherwise use current window's
+          Get( WindowContentHeight ) );
+  
+    /* Read desired settings for status area, zoom and view. */
+  
+    $status area =
+      Case( 
+        not IsEmpty( script.parameter( "status area" ) );
+          script.parameter( "status area" ); 
+        has saved settings;
+          Window Settings::Status Area;
+        has default size;
+          Let( user choice = 
+            Window Size::Status Area;
+            Case( 
+              user choice = "Same"; Get( StatusAreaState );
+              user choice = "Off"; 0;
+              user choice = "On"; 1;
+              user choice = "On, locked"; 2;
+              user choice = "Off, locked"; 3 ) );
+        // otherwise use current window's
+          Get( StatusAreaState ) );
+
+    /* View is always passed explicitly or read from default
+    size. It is never saved nor it copied from the current
+    window; if neither the parameter nor default settings
+    are present, the controller assumes form view. */
+          
+    view = 
+      Case(
+        not IsEmpty( script.parameter( "view" ) );
+          script.parameter( "view" ); 
+        has default size;
+          Let( user choice =
+            Window Size::View;
+              Case(
+                user choice = "Form"; 0;
+                user choice = "List"; 1;
+                user choice = "Table"; 2 ) );
+        // otherwise default to form
+          0 /* Form */ );
+  
+    /* Measure the size of controls using the current window. */
+  
+    full controls width = 
+      Get( WindowWidth ) - Get( WindowContentWidth );
+    full controls height = 
+      Get( WindowHeight ) - Get( WindowContentHeight );
+  
+    /* The size of controls includes operating system
+    controls (window title, border, scrollbars) and
+    FileMaker controls (status area/toolbar and the vertical
+    bar on the left side that appears in list and table
+    views).
+    
+    System controls are always present; under Mac OS X
+    their size is fixed, under Windows it may vary, but
+    since the controller measures them each time, it always
+    gets up-to-date values.
+    
+    FileMaker controls can be on or off. If the current
+    window and the target have different settings, the
+    controller needs to make some adjustments to correctly
+    calculate window size and position. There are two
+    possible differences: status area and view.
+    
+    FileMaker v7-9 has both status area and view are on the
+    left side. The status area is 69 px. The view area is 3
+    px in list or table views, but if status area is on, the
+    view area merges with the status area so the total width
+    remains 69 px. Toggling the status area on or off
+    doesn't change the total window width, but adds space
+    for content.
+    
+    FileMaker v10 has status toolbar (formerly area) on top
+    and view area on left. The view area remains 3 px in
+    list of table views and is no longer affected by status
+    toolbar. The status toolbar consists of a large bar
+    above a smaller one. Under Windows their total size is
+    80 px. Under Mac the size of the large bar may vary and
+    the size of the small bar is 25 px. Under Windows
+    toggling the bar on or off doesn't change the total
+    window height, but adds more space for content. Under
+    Mac toggling the bar adjusts the window height by the
+    size of the large bar, but doesn't include the small
+    bar.
+    
+    This means that under Mac the window controller uses
+    one (final) height value to position the window
+    vertically and to calculate the proper zoom level, but
+    may adjust this height by the (variable) height of the
+    status toolbar to open the window, because the height
+    will automatically change when the toolbar is toggled.
+    
+    To calculate the variable height of the toolbar the
+    controller uses the fact that system controls under Mac
+    have fixed height (of 37 px). */
+  
+    status area is on =
+      Get( StatusAreaState ) = 1 or Get( StatusAreaState ) = 2;   
+  
+    status area should be on =
+      $status area = 1 or $status area = 2;   
+  
+    status area width adjustment = 
+      Case(
+        10 ≤ FileMaker version;
+          0;
+        status area is on and not status area should be on;
+          -69;
+        not status area is on and status area should be on;
+          +69;
+        /* otherwise */
+          0 );
+  
+    status area height adjustment = 
+      Case( 
+        FileMaker version < 10;
+          0;
+        // otherwise
+          Let( adjustment = 
+            Case( 
+              on Mac; 
+                full controls height - 37 /* system controls */;
+              on WIndows; 
+                80 );
+            Case( 
+              status area is on and not status area should be on;
+                - adjustment;
+              not status area is on and status area should be on;
+                + adjustment;
+            /* otherwise */
+              0 ) ) );
+  
+    Mac open adjustment = 
+      Case( 10 ≤ FileMaker version and on Mac;
+        Let( adjustment = 
+          full controls height - 37 /* system controls */ - 25 /* small bar */;
+          Case( 
+            status area is on and not status area should be on;
+              + adjustment;
+            not status area is on and status area should be on;
+              - adjustment;
+            /* otherwise */
+              0 ) ) );
+          
+    /* Adjust for view state, if necessary. */
+  
+    view is form =
+      Get( LayoutViewState ) = 0;
+    view should be form =
+      view = 0;
+  
+    /* Starting with v10 view adjustment no longer depends on status area state. */
+              
+    view width adjustment =
+      Case(
+        view is form 
+            and not view should be form
+            and ( 10 ≤ FileMaker version
+              or not status area should be on );
+          +3;
+        not view is form 
+            and view should be form
+            and ( 10 ≤ FileMaker version
+              or not status area is on );
+          -3;
+        /* otherwise */
+          0 );
+  
+    /* Calculate sizes of controls for the target window. */
+  
+    controls width =
+      full controls width + status area width adjustment + view width adjustment;        
+    controls height =
+      full controls height + status area height adjustment;
+  
+    /* Get fresh dimensions of desktop. The controller uses
+    them to calculate content scale, if necessary, to align
+    against desktop, if this is the reference and finally to
+    make sure the window stays on the desktop.*/
+    
+    // Under Windows FileMaker reports 4 pixels less in either dimension
+  
+    platform adjustment =
+      Case( on Windows; -4 );
+  
+    desktop width =
+      Get( WindowDesktopWidth ) 
+          + platform adjustment;
+    
+    desktop height =
+      Get ( WindowDesktopHeight ) 
+          + platform adjustment
+          + status bar adjustment
+          + toolbar adjustment;
+
+    /* There are two zoom levels: initial zoom and target
+    zoom. The initial zoom level is read from saved settings
+    or from the current window; the target zoom is what
+    developer specifies via a parameter or in window size.
+    */
+    
+    source zoom = 
+      Case( 
+        has saved settings;
+          Window Settings::Zoom;
+        // otherwise use current window's
+          GetAsNumber( Get( WindowZoomLevel ) ) );
+
+    target zoom = 
+      Case( 
+        not IsEmpty( script.parameter( "zoom" ) );
+          GetAsNumber( script.parameter( "zoom" ) ); 
+        has saved settings;
+          Window Settings::Zoom;
+        has default size;
+          Let( user choice = Window Size::Zoom;
+            Case(
+              user choice = "Same"; 
+                GetAsNumber( Get( WindowZoomLevel ) );
+              /* otherwise */ 
+                GetAsNumber( user choice ) ) );
+        // otherwise use current window's
+          GetAsNumber( Get( WindowZoomLevel ) ) );
+    
+    initial scale =
+      target zoom / source zoom;
+
+    scale =
+      Case(
+        not IsEmpty( script.parameter( "zoom" ) )
+            or has saved settings;
+          initial scale; 
+        has default size 
+            and Set Contains( Window Size::Options; "Scale down to fit" );
+          Let( [
+            desktop width =
+              desktop width - 2 * scale margin;
+            desktop height =
+              desktop height - 2 * scale margin;
+            max horizontal scale =
+              ( desktop width - controls width ) / content width;
+            max vertical scale =
+              ( desktop height - controls height ) / content height;
+            min max scale =
+              Min( initial scale; max vertical scale; max horizontal scale ) ];
+    
+            Case( 
+              4 ≤ min max scale; 4;
+              3 ≤ min max scale; 3;
+              2 ≤ min max scale; 2;
+              1.5 ≤ min max scale; 1.5;
+              1 ≤ min max scale; 1;
+              .75 ≤ min max scale; .75;
+              .5 ≤ min max scale; .5;
+              /* otherwise use smallest */ .25 ) );
+        // otherwise
+          initial scale );
+  
+    /* Calculate the final zoom and almost final width and
+    height; on Mac the height can still be changed to
+    account for status toolbar behavior. */
+  
+    globals_wc_width =
+      Ceiling( content width * scale ) + controls width;
+    globals_wc_height =
+      Ceiling( content height * scale ) + controls height;
+    $zoom =
+      Case(
+        not IsEmpty( script.parameter( "zoom" ) )
+            or has saved settings;
+          target zoom; 
+        has default size 
+            and Set Contains( Window Size::Options; "Scale down to fit" );
+          scale * 100;
+        // otherwise
+          target zoom );
+      
+    /* If the user doesn't specify the “alignment”
+    parameter, the Alignment field may fetch the default
+    alignment and if the user specifies the parameter, the
+    script copies it in the Alignment field. So things looks
+    identical, but the situation is different; if the user
+    specifies alignment explicitly, this overrides saved top
+    and left settings, but if alignment is default, saved
+    settings take precedence. The controller tells the
+    difference by checking the parameter. */
+    
+    explicit alignment =
+      not IsEmpty( script.parameter( "alignment" ) );
+      
+    /* The top and left may be specified explicitly from
+    parameters, saved settings and current window (as a
+    fallback) or be calculated dynamically from alignment.
+    */
+    
+    explicit left =
+      Case(
+        not IsEmpty( script.parameter( "left" ) );
+          GetAsNumber( script.parameter( "left" ) );
+        not explicit alignment and has saved settings;
+          Window Settings::Left;
+        not has default size;
+          Get( WindowLeft ) );
+  
+    explicit top =
+      Case(
+        not IsEmpty( script.parameter( "top" ) );
+          GetAsNumber( script.parameter( "top" ) );
+        not explicit alignment and has saved settings;
+          Window Settings::Top;
+        not has default size;
+          Get( WindowTop ) );
+      
+    // The controller calculates position from alignment only if it didn't get explicit position so far.
+  
+    bounds = 
+      Case( IsEmpty( explicit top ) or IsEmpty( explicit left );
+        Let( reference = Window Alignment::Reference;
+          Case( 
+            reference = "desktop";
+              "0 0 " 
+              & desktop width 
+              & " " & desktop height;
+  
+            reference = "current window";
+              Get( WindowLeft ) 
+              & " " & Get( WindowTop ) 
+              & " " & ( Get( WindowLeft ) + Get( WindowWidth ) ) 
+              & " " & ( Get( WindowTop ) + Get( WindowHeight ) );
+  
+            reference = "object";
+              GetLayoutObjectAttribute( Window Alignment::Object Name; 
+                "bounds" ) ) ) );
+  
+    initial left =
+      If( not IsEmpty( explicit left );
+        explicit left;
+      // else
+        Let( [
+          globals_wc_left = 
+            MiddleWords( bounds; 1; 1 );
+          right = 
+            MiddleWords( bounds; 3; 1 );
+          point =
+            Window Alignment::Horizontal Point;
+          reference =
+            Case( 
+              point = "Left"; 
+                globals_wc_left;
+              point = "Right"; 
+                right;
+              point = "Center"; 
+                globals_wc_left + Floor( ( right - globals_wc_left ) / 2 ) );
+          proxy = 
+            Window Alignment::Horizontal Proxy ];
+  
+          Window Alignment::Horizontal Offset
+          + Case(
+            proxy = "Left edge";
+              reference;
+            proxy = "Right edge";
+              reference - globals_wc_width;
+            proxy = "Center";
+              reference - Floor( globals_wc_width / 2 ) ) ) );
+  
+    initial top =
+      If(  not IsEmpty( explicit top );
+         explicit top;
+      // else
+        Let( [
+          globals_wc_top = 
+            MiddleWords( bounds; 2; 1 );
+          bottom = 
+            MiddleWords( bounds; 4; 1 );
+          point =
+            Window Alignment::Vertical Point;
+          reference =
+            Case( 
+              point = "Top"; 
+                globals_wc_top;
+              point = "Bottom"; 
+                bottom;
+              point = "Middle"; 
+                globals_wc_top + Floor( ( bottom - globals_wc_top ) / 2 ) );
+          proxy = 
+            Window Alignment::Vertical Proxy ];
+  
+          Window Alignment::Vertical Offset
+          + Case(
+            proxy = "Top edge";
+              reference;
+            proxy = "Bottom edge";
+              reference - globals_wc_height;
+            proxy = "Middle";
+              reference - Floor( globals_wc_height / 2 ) ) ) );
+  
+    // Finally make sure the window stays on screen
+  
+    $left =
+      Let( [
+        minimum left =
+          safety margin;
+        maximum left =
+          desktop width - globals_wc_width - 2 * safety margin ];
+        
+        Max( minimum left; Min( maximum left; initial left ) ) );
+  
+    $top =
+      Let( [
+        minimum top =
+          safety margin;
+        maximum top = 
+          desktop height - globals_wc_height - 2* safety margin ];
+        
+        Max( minimum top; Min( maximum top; initial top ) ) );
+        
+    /* And finally adjust the height, if necessary. */
+    $width = 
+      globals_wc_width;
+    $height =
+      globals_wc_height + Mac open adjustment ];
+      
+    "" /* Nothing to output */ ) )
