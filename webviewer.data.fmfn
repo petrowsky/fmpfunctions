@@ -1,12 +1,12 @@
 /*
-=====================================================
-webviewer.data( type; head; css; body )
-
-RETURNS:    (string) Webviewer data url for rendering local html content
-DEPS:       html.document
-NOTES:      
-=====================================================
-*/
+ * =====================================================
+ * webviewer.data( type; head; css; body )
+ * 
+ * RETURNS:    (string) Webviewer data url for rendering local html content
+ * DEPS:       html.document
+ * NOTES:      
+ * =====================================================
+ */
 
 "data:text/html," &
 

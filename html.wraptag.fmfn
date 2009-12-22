@@ -1,12 +1,12 @@
 /*
-=====================================================
-html.wraptag ( values; tag )
-
-RETURNS:    (string) HTML tags wrapped around a supplied list of items
-DEPS:       none
-NOTES:      
-=====================================================
-*/
+ * =====================================================
+ * html.wraptag ( values; tag )
+ * 
+ * RETURNS:    (string) HTML tags wrapped around a supplied list of items
+ * DEPS:       none
+ * NOTES:      
+ * =====================================================
+ */
 
 Let ([
 

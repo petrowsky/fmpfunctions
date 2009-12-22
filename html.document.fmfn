@@ -1,12 +1,12 @@
 /*
-=====================================================
-html.document ( type; head; css; body )
-
-RETURNS:    (string) HTML document with supplied parts
-DEPS:       none
-NOTES:      
-=====================================================
-*/
+ * =====================================================
+ * html.document ( type; head; css; body )
+ * 
+ * RETURNS:    (string) HTML document with supplied parts
+ * DEPS:       none
+ * NOTES:      
+ * =====================================================
+ */
 
 List(
   Case(

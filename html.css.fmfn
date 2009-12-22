@@ -1,12 +1,12 @@
 /*
-=====================================================
-html.css ( content )
-
-RETURNS:    (string) Raw css wrapped within style tags
-DEPS:       none
-NOTES:      
-=====================================================
-*/
+ * =====================================================
+ * html.css ( content )
+ * 
+ * RETURNS:    (string) Raw css wrapped within style tags
+ * DEPS:       none
+ * NOTES:      
+ * =====================================================
+ */
 
 "¶<style type=\"text/css\">¶" &
 
