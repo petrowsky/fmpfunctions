@@ -1,0 +1,37 @@
+/*
+ * =====================================================
+ * vars.objects( objects )
+ *
+ * RETURNS:        (string) Return delimted list of valid variable declarations
+ * DEPENDENCIES:   none 
+ * NOTES:          To be used with var.eval. Designed to have a list
+ *                 of object names passed so it can create a list of variables
+ *                 using object for the key and the object's contents for value.
+ *                 Should be used within context because of GetLayoutObjectAttribute()
+ * =====================================================
+ *
+ * This is useful for and interface which uses global fields as keys
+ * for relationships. You can call this function, pass in object names
+ * for global fields and have a valid varible structure created for
+ * you - ready to save.
+ *
+ */
+ 
+Let ( [
+  var.current = GetValue ( objects ; 1 ); // topmost value
+  var.remainder = RightValues( objects; ValueCount( objects ) - 1 );
+  var.return = "$" & var.current & " = " & Quote( GetLayoutObjectAttribute ( var.current ; "content" ) ); // return string
+  $function.var.objects.result = List ( var.return ; $function.var.objects.result ) // append return string to collection
+];
+  Case (
+    isempty ( objects ) ; "No objects found";
+    var.remainder > 1 ; vars.objects( var.remainder );
+    $function.var.objects.result
+  )
+)
+
+/*
+Because *Values functions leave
+trailing return you use > 1 for
+moving to next item in stack
+*/
