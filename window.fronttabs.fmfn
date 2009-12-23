@@ -1,0 +1,39 @@
+/*
+ * =====================================================
+ * window.fronttabs ()
+ * 
+ * RETURNS:       (list) Return delimited list of frontmost tabs.
+ * DEPENDENCIES:  list.custom(), layout.objects(), list.valueWithin()
+ * NOTES:         Adapted from Agnès Barouh <barouh.agnes@wanadoo.fr>
+ *                FrontTabsPanelsList()
+ * =====================================================
+ */
+
+ Let ([
+   $function.result = "|###|";
+   $function.return = ¶;
+   $function.objects =  layout.objects;
+
+   var.result = list.custom (
+     1; // start
+     ValueCount ( $function.objects ); // end
+     "Let ( [
+         var.current = GetValue ( $function.objects; [n] );
+         var.isFront = GetLayoutObjectAttribute ( var.current; \"isFrontTabPanel\" );
+         var.enclosing = GetLayoutObjectAttribute ( var.current; \"enclosingObject\" );
+         var.append = $function.return & var.current;
+         $function.result = $function.result & Case (
+                                                   var.isFront and IsEmpty ( var.enclosing ) ; var.append;
+                                                   var.isFront and list.valueWithin ( $function.result ; var.enclosing ) ; var.append
+                                                   )
+       ]; False )"
+   )
+   ];
+
+   Substitute ( $function.result ;
+     [ "|###|¶" ; ""];
+     [ "|###|" ; "" ]
+   )
+ )
+
+ & Let ( $function.result = "" ; "" )
