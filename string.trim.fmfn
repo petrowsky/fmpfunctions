@@ -15,12 +15,12 @@
 */
 
 Let([
-        $var.text = text;
+        $function.string.trim = text;
         var.default = List( " "; " "; "	"; "\¶"); // Default list of characters to remove (space, tab, return)
         var.characters = If ( IsEmpty( characters ); var.default; characters );
 
         var.function.parts = "[\"" & Substitute( var.characters; ¶; "\"; \"\"];¶[\"" ) & "\"; \"\"]";
-        var.function.clean = "Substitute( $var.text; " & var.function.parts & " )"; // Strip out specified chars
+        var.function.clean = "Substitute( $function.string.trim; " & var.function.parts & " )"; // Strip out specified chars
         var.function.result = Evaluate( var.function.clean );
 
         var.char.first = Position( text; Left( var.function.result; 1 ); 0; 1 ); // Position of first (non cleaned) char
