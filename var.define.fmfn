@@ -8,18 +8,22 @@
  * 
  * This custom function is a wrapper for the
  * assignment(creation) of global variables.
+ * Variables are tracked within $$VARIABLES
  */
 
-Let ( [
- $$ERROR.VAR.DEFINE = ""; // Reset the global error variable for evaluation
- var.calc = "Let ( $$" & name & " = " & Quote ( value ) & "; False )"
-];
-    If (
-        Evaluate( 
-            var.calc        
-        ) = "?";
-        Let ( $$ERROR.VAR.DEFINE = "EVAL ERROR¶-----¶" & var.calc; False );
-        // Insert the name of the variable into the reserved $$VARIABLES global variable
-        Let ( $$VARIABLES = If ( IsEmpty ( FilterValues ( $$VARIABLES ; name ) ); List ( $$VARIABLES ; name ) ; $$VARIABLES ) ; True )
-    )
+Let ( $function.var.define.value = value; // preserve the data type of the inbound value
+  Let ( [
+   $$ERROR.VAR.DEFINE = ""; // Reset the global error variable for evaluation
+   var.dollarsign = If ( Left ( name ; 2 ) = "$$" ; "" ; "$$" ); // check for prefixed $$
+   var.calc = "Let ( " & var.dollarsign & name & " = $function.var.define.value; False )"
+  ];
+      If (
+          Evaluate( 
+              var.calc        
+          ) = "?";
+          Let ( $$ERROR.VAR.DEFINE = "EVAL ERROR¶-----¶" & var.calc; False );
+          // Insert the name of the variable into the reserved $$VARIABLES global variable
+          Let ( $$VARIABLES = If ( IsEmpty ( FilterValues ( $$VARIABLES ; name ) ); List ( $$VARIABLES ; name ) ; $$VARIABLES ) ; True )
+      )
+  )
 )
