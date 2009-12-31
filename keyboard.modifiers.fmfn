@@ -1,0 +1,52 @@
+/*
+ * =====================================================
+ * keyboard.modifiers( keys ; ignore )
+ *
+ * RETURNS:        (boolean) based on modifier keys being held down
+ * PARAMETERS:     @keys = List() of "keys" or string (e.g List("Command"; "Alt") or "command-alt")
+ *                 @ignore = (bool) whether or not to ignore caps lock
+ * DEPENDENCIES:   none 
+ * NOTES:          Adapted from http://www.briandunning.com/cf/473 by Peter Wagemans, SHpartners
+ * =====================================================
+ * 
+ */
+
+Let ( [
+  // Define
+  var.keys = Get ( ActiveModifierKeys );
+  // Convert keys to their bit values (see note at bottom)
+  var.command = Mod ( Int ( var.keys / 16 ) ; 2 );
+  var.alt = Mod ( Int ( var.keys / 8 ) ; 2 );
+  var.control = Mod ( Int ( var.keys / 4 ) ; 2 );
+  var.capslock = Mod ( Int ( var.keys / 2 ) ; 2 );
+  var.shift = Mod ( var.keys ; 2 )
+];
+  // Result (boolean)
+  ( var.command xor not PatternCount ( keys ; "command" ) )
+  and
+    ( var.alt xor not ( PatternCount ( keys ; "alt" ) or PatternCount ( keys ; "option" ) ) )
+  and
+    ( var.control xor not ( PatternCount ( keys ; "ctrl" ) or PatternCount ( keys ; "control") ) )
+  and
+    If ( not ignore ; ( var.capslock xor not PatternCount ( keys ; "capslock" ) ) ; True )
+  and
+    ( var.shift xor not PatternCount ( keys ; "shift" ) )
+  and
+    ( ( var.keys = 0 ) xor ( keys ≠ "" ) )
+)
+
+/*
+The Mod() function is used to determine
+if the key is within the result of
+Get ( ActiveModifierKeys )
+
+16  8  4  2  1
+--------------
+0   0  1  0  1
+|   |  |  |  |
+|   |  |  |  Shift
+|   |  |  Caps Lock
+|   |  Ctrl
+|   Alt/Option
+Apple Command Key
+*/
