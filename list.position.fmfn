@@ -1,11 +1,11 @@
 /*
-=====================================================
-list.position ( values; search )
-
-RETURNS:    (number) numerical position of the supplied value
-DEPS:       none
-NOTES:      
-=====================================================
-*/
+ * =====================================================
+ * list.position ( values; search )
+ * 
+ * RETURNS:    (number) numerical position of the supplied value
+ * DEPS:       none
+ * NOTES:      
+ * =====================================================
+ */
 
 Position ( Substitute ( Filter ( Substitute ( ¶& values &¶ ; ¶& search &¶ ; "¶•¶" ) ; "•¶" ) ; ¶ ; "|" ) ; "•" ; 1 ; 1 ) - 1
