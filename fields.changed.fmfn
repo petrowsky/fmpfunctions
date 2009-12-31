@@ -1,0 +1,30 @@
+/*
+ * =====================================================
+ * fields.changed ( field ;  result ; triggers )
+ * 
+ * RETURNS:        (mixed) Either the field (typically self) or the result
+ * PARAMETERS:     @field = Always use the Self function
+ *                 @result = a calculated result
+ *                 @triggers = [optional] field references which should force the auto-enter to trigger
+ * DEPENDENCIES:   REQUIRES FileMaker 10 
+ * NOTES:          This allows fields to become interdependant on each other
+ *                 Adapted from AllowInputInAutoEnter() by Fabrice Nordmann & Tanguy Collès, BH&A
+ * USAGE:          Use when two or more fields are interdependant and any of the fields can be changed
+ *                 for example: A conversion of inches -> centimeters or centimeters -> inches.
+ *                 With both fields modifiable.
+ * EXAMPLE:        fields.changed ( Self ; inches / .3937007874 ; "" )
+ * =====================================================
+ * 
+ */
+
+Case (
+  // If the active field is the same as the one being evaluated
+  GetFieldName ( field ) = Get ( ActiveFieldTableName )
+                           & "::" & Get ( ActiveFieldName )
+                           & Case (
+                                    Get ( ActiveRepetitionNumber ) > 1 ;
+                                      "[" & Get ( ActiveRepetitionNumber ) & "]"
+                             );
+  Get ( ActiveFieldContents ); // returned what was entered by the user
+  result // otherwise, return the calculated result (becauase I'm not the active field)
+)
