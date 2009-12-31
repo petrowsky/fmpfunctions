@@ -1,6 +1,7 @@
 /*
  * =====================================================
  * var.define( name ; value )
+ *
  * RETURNS:        (bool) True or False based on proper evaluation
  * DEPENDENCIES:   none 
  * NOTES:          see var.eval for declaring multiple variables
