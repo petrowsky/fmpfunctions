@@ -3,9 +3,9 @@
  * var.list ( keys; values; scope )
  * 
  * RETURNS:       (string) key/value pairs as $key = value in positional order
- * PARAMETERS:    keys = List() of key names
- *                values = List() of values
- *                scope = (enum) global, local
+ * PARAMETERS:    @keys = List() of key names
+ *                @values = List() of values
+ *                @scope = (enum) global, local
  * DEPENDENCIES:  none
  * ABOUT:         Takes two compliment set of lists
  *                and turns them into FMP defined variables
