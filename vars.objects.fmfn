@@ -10,7 +10,7 @@
  *                 Should be used within context because of GetLayoutObjectAttribute()
  * =====================================================
  *
- * This is useful for and interface which uses global fields as keys
+ * This is useful for an interface which uses global fields as keys
  * for relationships. You can call this function, pass in object names
  * for global fields and have a valid varible structure created for
  * you - ready to save.
@@ -19,14 +19,14 @@
  
 Let ( [
   var.current = GetValue ( objects ; 1 ); // topmost value
-  var.remainder = RightValues( objects; ValueCount( objects ) - 1 );
-  var.return = "$" & var.current & " = " & Quote( GetLayoutObjectAttribute ( var.current ; "content" ) ); // return string
-  $function.var.objects.result = List ( var.return ; $function.var.objects.result ) // append return string to collection
+  var.remainder = RightValues ( objects ; ValueCount( objects ) - 1 );
+  var.return = "$" & var.current & " = " & Quote ( GetLayoutObjectAttribute ( var.current ; "content" ) ); // return string
+  $function.vars.objects.result = List ( var.return ; $function.vars.objects.result ) // append return string to collection
 ];
   Case (
     isempty ( objects ) ; "No objects found";
     var.remainder > 1 ; vars.objects( var.remainder );
-    $function.var.objects.result
+    $function.vars.objects.result
   )
 )
 
