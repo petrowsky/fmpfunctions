@@ -1,0 +1,12 @@
+/*
+ * =====================================================
+ * layout.view ( )
+ * 
+ * RETURNS:        (string) Human readable version of Get(LayoutViewState)
+ * DEPENDENCIES:   none 
+ * NOTES:          Simple helper function
+ * =====================================================
+ * 
+ */
+
+Choose ( Get(LayoutViewState) ; "Form" ; "List" ; "Table" )
