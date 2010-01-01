@@ -1,0 +1,61 @@
+/*
+ * =====================================================
+ * keyboard.chars( character )
+ *
+ * RETURNS:        (string) unicode characters of keyboard symbols
+ * PARAMETERS:     @char = (string) name of the character (matches the variable name)
+ * DEPENDENCIES:   none 
+ * NOTES:          
+ * =====================================================
+ * 
+ */
+
+Let ( [
+  wineval = "Let ( [¶
+    alt = TextStyleAdd ( \"alt\" ; Superscript );¶
+    control= TextFont ( \"ˆ\" ; \"Arial\" );¶
+    deleteback = TextFont ( \"Õ\" ; \"Wingdings\" );¶
+    deleteforward = TextFont (\"Ö\" ; \"Wingdings\" );¶
+    escape = TextStyleAdd ( \"esc\" ; Superscript );¶
+    return = TextFont (\"¿\" ; \"Symbol\" );¶
+    shift = TextFont ( \"ñ\" ; \"Wingdings\" )¶
+    ];¶"
+      & character &
+    ")";
+    
+  maceval = "Let ( [¶
+    alt = \"⌥\";¶
+    applesymbol = \"\";¶
+    capslock = \"⇪\";¶
+    clear = \"⌧\";¶
+    command = \"⌘\";¶
+    control = \"⌃\";¶
+    deleteback = \"⌫\";¶
+    deleteforward = \"⌦\";¶
+    downarrow = \"⇣\"; // alternates ↓¶
+    eject = \"⏏\";¶
+    end = \"↘\"; // alternates ⇲¶
+    enter = \"⌤\";¶
+    escape = \"⎋\";¶
+    home = \"↖\"; // alternates ⇱ ↸¶
+    leftarrow = \"⇠\"; // alternates ←¶
+    numberlock = \"⇭\";¶
+    pagedown = \"⇟\";¶
+    pageup = \"⇞\";¶
+    power = \"⌽\";¶
+    return = \"⏎\"; // alternates ↩¶
+    rightarrow = \"⇢\"; // alternates →¶
+    shift = \"⇧\";¶
+    space = \"␣\";¶
+    tabback = \"⇤\";¶
+    tabforward = \"⇥\";¶
+    uparrow = \"⇡\" // alternates ↑¶
+  ];¶"
+    & character &
+  ")";
+  
+  isWindows = Case( Get( SystemPlatform ) = -2; True ; False ); 
+  result = Case ( isWindows ; Evaluate ( wineval ) ; TextFont ( Evaluate ( maceval ) ; "Apple Symbols" ) )
+];
+  If ( result ≠ "?" ; result ; "No match")
+)
