@@ -1,0 +1,14 @@
+/*
+ * =====================================================
+ * user.isEditing()
+ *
+ * RETURNS:        (boolean) based on database editing state
+ * DEPENDENCIES:   none 
+ * NOTES:          none
+ * =====================================================
+ * 
+ */
+
+Get ( ActiveFieldName ) ≠ null
+or
+Get ( RecordOpenCount ) > 0
