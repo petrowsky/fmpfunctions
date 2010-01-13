@@ -1,23 +1,23 @@
 /*
-=====================================================
-date.fromUnix( unix; timezone)
+ * =====================================================
+ * date.fromUnix( unix; timezone)
+ * 
+ * RETURNS:    (date) FileMaker timestamp value based on unix timestamp supplied
+ * DEPS:       none
+ * NOTES:      
+ * =====================================================
+ *
+ */
 
-RETURNS:    (date) FileMaker timestamp value based on unix timestamp supplied
-DEPS:       none
-NOTES:      
-=====================================================
-*/
-
-Let ( 
-[
-UnixTimeAdjusted = (unix + (timezone * 3600));
-days = Truncate(Div(UnixTimeAdjusted;86400);0);
-days_remainder = Mod(UnixTimeAdjusted;86400);
-hours = Truncate(Div (days_remainder; 3600);0);
-hours_remainder = Mod (days_remainder; 3600);
-minutes = Truncate(Div( hours_remainder; 60);0);
-minutes_remainder = Mod ( hours_remainder; 60);
-seconds = minutes_remainder
+Let ( [
+  UnixTimeAdjusted = ( unix + (timezone * 3600 ) );
+  days = Truncate ( Div ( UnixTimeAdjusted; 86400 ); 0 );
+  days_remainder = Mod ( UnixTimeAdjusted; 86400 );
+  hours = Truncate ( Div ( days_remainder; 3600 ); 0 );
+  hours_remainder = Mod ( days_remainder; 3600 );
+  minutes = Truncate ( Div ( hours_remainder; 60 ); 0) ;
+  minutes_remainder = Mod ( hours_remainder; 60 );
+  seconds = minutes_remainder
 ];
-Timestamp (Date ( 1; 1; 1970) + days; Time ( hours ; minutes ; seconds ))
+  Timestamp ( Date ( 1; 1; 1970) + days; Time ( hours ; minutes ; seconds ))
 )
