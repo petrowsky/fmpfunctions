@@ -18,7 +18,7 @@ Let ( [
     "$errornum=" & var.error;
     "$errorstring=" & quote ( error.string ( var.error ) );
     "$script=" & Quote ( Get ( ScriptName ) );
-    )
+    );
     "$error=" & False // Default
   )
 )
