@@ -1,0 +1,24 @@
+/*
+ * =====================================================
+ * error.last( )
+ * 
+ * RETURNS:        (string) Parameterized result of key/values about result
+ * DEPENDENCIES:   error.string()
+ * NOTES:          Use var.eval() to turn the returned list into local variables
+ * =====================================================
+ * 
+ */
+
+Let ( [
+  var.error = Get ( LastError )
+];
+  If ( var.error ≠ 0;
+    List (
+    "$error=" & True;
+    "$errornum=" & var.error;
+    "$errorstring=" & quote ( error.string ( var.error ) );
+    "$script=" & Quote ( Get ( ScriptName ) );
+    )
+    "$error=" & False // Default
+  )
+)
