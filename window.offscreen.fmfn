@@ -1,6 +1,6 @@
 /*
  * =====================================================
- * window.offscreen( side )
+ * window.offscreen( property )
  * 
  * RETURNS:       (int) Value of where window should appear.
  * DEPENDENCIES:  developer()
