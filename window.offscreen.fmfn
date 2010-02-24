@@ -1,16 +1,30 @@
 /*
-=====================================================
-window.offscreen( side )
+ * =====================================================
+ * window.offscreen( side )
+ * 
+ * RETURNS:       (int) Value of where window should appear.
+ * DEPENDENCIES:  developer()
+ * NOTES:         none
+ * =====================================================
+ */
 
-RETURNS:    (int) Number value of where offscreen window should show up.
-DEPS:       Developer custom function.
-NOTES:      Based on a boolean result of a function named "Developer" the window
-            is drawn on the screen or off.
-=====================================================
-*/
-
-Case(
-side = "top" ; If ( Developer; Get ( WindowTop ); Get ( WindowDesktopHeight ) );
-side = "left" ; If ( Developer; Get ( WindowLeft ); Get ( WindowDesktopWidth ) );
-0
+Let ( [
+ var.onscreen = developer and $$DEVELOPER;
+ var.offset = 100;
+ var.property = Left ( property ; 1 ) // Account for use of single letters or full word by using Left()
+];
+ Case (
+   var.property = "t" ; If ( var.onscreen ; Get ( WindowTop ) + var.offset ; Get ( WindowDesktopHeight ) );
+   var.property = "l" ; If ( var.onscreen ; Get ( WindowLeft ) + var.offset ; Get ( WindowDesktopWidth ) );
+   0
+ )
 )
+
+/*
+Special note about $$DEVELOPER.
+This value is used solution wide to control
+when scripts operate in a developer mode
+This allows you to see windows and other
+developer specific operations or screens.
+This value can be set at startup.
+*/
