@@ -1,0 +1,31 @@
+/*
+ * =====================================================
+ * var.set( name ; value )
+ *
+ * RETURNS:        (bool) True or False based on proper evaluation
+ * DEPENDENCIES:   none 
+ * NOTES:          see var.eval for declaring multiple variables
+ * =====================================================
+ * 
+ * This custom function is a wrapper for the
+ * assignment(creation) of global variables.
+ * Variables are not tracked and errors are
+ * revealed within $$ERROR.VAR.SET
+ */
+
+Let ( $function.var.make.value = value; // preserve the data type of the inbound value
+  Let ( [
+   $$ERROR.VAR.SET = ""; // Reset the global error variable for evaluation
+   var.dollarsign = If ( Left ( name ; 2 ) = "$$" or Left ( name ; 1 ) = "$"; "" ; "$$" ); // check for prefixed $$
+   var.calc = "Let ( " & var.dollarsign & name & " = $function.var.define.value; False )"
+  ];
+      If (
+          Evaluate( 
+              var.calc        
+          ) = "?";
+          Let ( $$ERROR.VAR.SET = "EVAL ERROR¶-----¶" & var.calc; False );
+          // Insert the name of the variable into the reserved $$VARIABLES global variable
+          True
+      )
+  )
+)
