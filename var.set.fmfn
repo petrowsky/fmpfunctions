@@ -16,16 +16,16 @@
 Let ( $function.var.make.value = value; // preserve the data type of the inbound value
   Let ( [
    $$ERROR.VAR.SET = ""; // Reset the global error variable for evaluation
-   var.dollarsign = If ( Left ( name ; 2 ) = "$$" or Left ( name ; 1 ) = "$"; "" ; "$$" ); // check for prefixed $$
-   var.calc = "Let ( " & var.dollarsign & name & " = $function.var.define.value; False )"
+   var.dollarsign = If ( Left ( name ; 2 ) = "$$" or Left ( name ; 1 ) = "$"; "" ; "$$" ); // check for prefixed $$ or $
+   var.calc = "Let ( " & var.dollarsign & name & " = $function.var.make.value; False )"
   ];
       If (
           Evaluate( 
               var.calc        
           ) = "?";
-          Let ( $$ERROR.VAR.SET = "EVAL ERROR¶-----¶" & var.calc; False );
+          Let ( $$ERROR.VAR.SET = List ("EVAL ERROR"; "-------"; var.calc ); False );
           // Insert the name of the variable into the reserved $$VARIABLES global variable
-          True
+          Let ( $$VAR.SET = List ( "VAR CALC"; "-------"; var.calc ); True )
       )
   )
 )

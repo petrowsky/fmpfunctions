@@ -22,7 +22,7 @@ Let ( $function.var.define.value = value; // preserve the data type of the inbou
           Evaluate( 
               var.calc        
           ) = "?";
-          Let ( $$ERROR.VAR.DEFINE = "EVAL ERROR¶-----¶" & var.calc; False );
+          Let ( $$ERROR.VAR.DEFINE = List ( "EVAL ERROR"; "-------"; var.calc ); False );
           // Insert the name of the variable into the reserved $$VARIABLES global variable
           Let ( $$VARIABLES = If ( IsEmpty ( FilterValues ( $$VARIABLES ; name ) ); List ( $$VARIABLES ; name ) ; $$VARIABLES ) ; True )
       )

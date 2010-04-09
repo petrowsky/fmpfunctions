@@ -24,7 +24,7 @@ Let( [
       Evaluate( 
           "Let ( [" & var.contents & "]; 1 )"        
       ) = "?";
-      Let ( $$ERROR.VAR.EVAL = "EVAL ERROR¶-----¶" & var.contents; False );
+      Let ( $$ERROR.VAR.EVAL = List ( "EVAL ERROR"; "-------"; var.contents ); False );
       True
   )
 )

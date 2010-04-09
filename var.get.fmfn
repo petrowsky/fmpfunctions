@@ -1,0 +1,16 @@
+/*
+ * =====================================================
+ * var.get( name )
+ *
+ * RETURNS:        (mixed) Value of the variable specified by name
+ * DEPENDENCIES:   none 
+ * NOTES:          Works only with $$global vars
+ * =====================================================
+ * 
+ */
+
+Let ( [
+  var.dollarsign = If ( Left ( name ; 2 ) = "$$" ; "" ; "$$" ) // check for prefixed $$
+];
+  Let ( var.result = Evaluate( var.dollarsign & name ) ; If ( var.result = "?" ; "" ; var.result )
+)
