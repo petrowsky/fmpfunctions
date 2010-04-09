@@ -1,0 +1,21 @@
+/*
+ * =====================================================
+ * var.merge( name ; default )
+ *
+ * RETURNS:        (mixed) An assigned variable
+ * DEPENDENCIES:   var.set() 
+ * NOTES:          Used exclusively for layout merge variables (FMP11+)
+ * =====================================================
+ * 
+ * This custom function is a wrapper for the
+ * assignment(creation) of global variables
+ * from layout based merge variables.
+ * Use this function within conditional formatting
+ */
+
+Let ( [
+  $$var.isMerge = PatternCount ( name ; "<<" ) and PatternCount ( name ; ">>" ); // determine if a real merge var
+  $$var.name = If ( $$var.isMerge ; Trim ( Substitute ( name ; ["<<";""] ; [">>";""] ) ) ; False ) // strip off the merge wrap
+];
+  If ( not IsEmpty ( $$var.name ) ; var.set ( $$var.name ; default ) ; False )
+)
