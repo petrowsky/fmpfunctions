@@ -25,7 +25,7 @@ Let ( $function.var.make.value = value; // preserve the data type of the inbound
           ) = "?";
           Let ( $$ERROR.VAR.SET = List ("EVAL ERROR"; "-------"; var.calc ); False );
           // Insert the name of the variable into the reserved $$VARIABLES global variable
-          Let ( $$VAR.SET = List ( "VAR CALC"; "-------"; var.calc ); True )
+          True
       )
   )
 )
