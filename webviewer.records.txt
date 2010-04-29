@@ -1,0 +1,41 @@
+/*
+ * =====================================================
+ * webviewer.records( format ; css ; color )
+ * 
+ * RETURNS:        (string) Web viewer formatted record counter
+ * DEPENDENCIES:   webviewer.data(), html.document(), html.css()
+ * NOTES:          Available placeholders [current], [found], [percentage]
+ * =====================================================
+ * 
+ */
+
+// example:
+// webviewer.records ( "Record [current] of [found] | [percentage]" ; "#bar { background-color: green }" )
+
+Let ( [
+  var.record     = Get(RecordNumber);
+  var.found      = Get(FoundCount);
+  var.total      = Get(TotalRecordCount);
+  isSubset       = var.total = var.found;
+  var.percentage = Truncate ( ( var.record / var.found ) * 100 ; 0 ) & "%";
+  cssBar         = Substitute ( "#bar { float: left; z-index: -3; background-color: @color; position: fixed; top: 0; height: 100%; width: @width; }";
+                                [ "@color" ; color ];
+                                [ "@width" ; var.percentage ]
+                    )
+  ];
+  webviewer.data( "";
+    "<title>Record Information</title>";
+    html.css( "body { text-align: center; margin: 0; } #text{ margin:0 auto; }" & cssBar & css ); // load user css after the bar for override support
+    List (
+      "<div id=\"text\">";
+      Substitute ( 
+        format;
+        [ "[current]" ; var.record ];
+        [ "[found]" ; var.found ];
+        [ "[percentage]" ; var.percentage ]
+      );
+      "</div>";
+      "<div id=\"bar\"></div>";
+    )
+  )
+)
