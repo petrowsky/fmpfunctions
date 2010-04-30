@@ -18,24 +18,24 @@ Let ( [
   var.total      = Get(TotalRecordCount);
   isSubset       = var.total = var.found;
   var.percentage = Truncate ( ( var.record / var.found ) * 100 ; 0 ) & "%";
-  cssBar         = Substitute ( "#bar { float: left; z-index: -3; background-color: @color; position: fixed; top: 0; height: 100%; width: @width; }";
+  cssBar         = Substitute ( "#bar { background-color: @color; height: 100%; width: @width; }";
                                 [ "@color" ; color ];
                                 [ "@width" ; var.percentage ]
                     )
   ];
   webviewer.data( "";
     "<title>Record Information</title>";
-    html.css( "body { text-align: center; margin: 0; } #text{ margin:0 auto; }" & cssBar & css ); // load user css after the bar for override support
+    html.css( "body { text-align: center; margin: 0; border: 0; } #text{ margin:0 auto; }" & cssBar & css ); // load user css after the bar for override support
     List (
-      "<div id=\"text\">";
-      Substitute ( 
+      "<div id=\"bar\" style=\"position: absolute; top: 0; left: 0;\"></div>";
+      "<div id=\"text\" style=\"position: absolute; top: 0; left: 0; width: 100%\">";
+      Substitute (
         format;
         [ "[current]" ; var.record ];
         [ "[found]" ; var.found ];
         [ "[percentage]" ; var.percentage ]
       );
       "</div>";
-      "<div id=\"bar\"></div>";
     )
   )
 )
