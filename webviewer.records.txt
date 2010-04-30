@@ -1,8 +1,8 @@
 /*
  * =====================================================
- * webviewer.records( format ; css ; color )
+ * webviewer.records ( format ; css ; color )
  * 
- * RETURNS:        (string) Web viewer formatted record counter
+ * RETURNS:        (string) Web viewer using formatted string
  * DEPENDENCIES:   webviewer.data(), html.document(), html.css()
  * NOTES:          Available placeholders [current], [found], [percentage]
  * =====================================================
@@ -19,7 +19,7 @@ Let ( [
   isSubset       = var.total = var.found;
   var.percentage = Truncate ( ( var.record / var.found ) * 100 ; 0 ) & "%";
   cssBar         = Substitute ( "#bar { background-color: @color; height: 100%; width: @width; }";
-                                [ "@color" ; color ];
+                                [ "@color" ; If ( isempty ( color ) ; "transparent" ; color ) ];
                                 [ "@width" ; var.percentage ]
                     )
   ];
