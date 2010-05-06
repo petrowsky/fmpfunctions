@@ -1,0 +1,24 @@
+/*
+ * =====================================================
+ * selection.delete ()
+ * 
+ * RETURNS:        (string) Active field contents less selection or one backspace
+ * DEPENDENCIES:   none 
+ * NOTES:          Useful when determining field contents with keystroke triggers
+ * =====================================================
+ * 
+ */
+
+
+Let ( [
+  var.content = Get ( ActiveFieldContents );
+  var.endPoint = If ( Get ( ActiveSelectionSize ) > 0 ; Get ( ActiveSelectionStart ) + Get ( ActiveSelectionSize ) ; False );
+  var.toDelete = Middle ( var.content ; Get ( ActiveSelectionStart ) ; var.endPoint - Get ( ActiveSelectionStart ) )
+];
+
+  If ( not var.endPoint;
+    Replace ( var.content ; Get ( ActiveSelectionStart ) -1 ; 1 ; "" );
+    Substitute ( Get ( ActiveFieldContents ) ; var.toDelete ; "" )
+  )
+
+)
