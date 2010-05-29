@@ -1,0 +1,51 @@
+/*
+ * =====================================================
+ * number.format ( input ; format )
+ * 
+ * RETURNS:        (string) Formatted input according to format supplied
+ * DEPENDENCIES:   none 
+ * NOTES:          Adapted from http://www.briandunning.com/cf/769 by Toby Beedell
+ * =====================================================
+ * 
+ */
+
+Let ( [
+  var.input = input;
+  var.format = format;
+  var.valid = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+  var.match = "#";
+  test.exit = IsEmpty ( var.input ) or IsEmpty ( var.format )
+
+]; 
+  If ( test.exit;
+    // then
+    var.input;
+    // else
+    Let ( [
+      match.count = PatternCount ( var.format; var.match );
+      match.none = match.count < 1;
+      format.length = Length ( var.format );
+      format.end = If ( match.none and format.length > 0 ; var.format )
+    ];
+      If ( match.none;
+        // then
+        format.end & var.input;
+        // else
+        Let ( [
+          var.filtered = Filter ( var.input ; var.valid );
+          filtered.length = Length ( var.filtered );
+          match.position = Position ( var.format ; var.match ; 1 ; 1 );
+          var.prefix = If ( match.position ≠ 1 ; Left ( var.format ; match.position - 1 ) );
+          format.char = Middle ( var.format ; match.position ; 1 );
+          var.char = Left ( var.filtered ; 1 );
+          is.upper = IsEmpty ( Filter ( format.char ; var.match ) );
+          _tBit = If ( is.upper ; Upper ( var.char ) ; Lower ( var.char ) );
+          format.remainder = Right ( var.format ; format.length - match.position );
+          input.remainder = Right ( var.filtered ; filtered.length - 1 )
+        ];
+          var.prefix & _tBit & number.format ( input.remainder ; format.remainder )
+        )
+      )
+    )
+  )
+)
