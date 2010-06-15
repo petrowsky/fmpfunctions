@@ -1,0 +1,36 @@
+/*
+ * =====================================================
+ * portal.grouping ( row ; part ; field )
+ * 
+ * RETURNS:        (bool) True or False based on relative portal rows
+ * DEPENDENCIES:   none 
+ * NOTES:          
+ * =====================================================
+ * 
+ */
+
+Case (
+ part = "top";
+   // Determine if at the top of a group
+     not IsEmpty ( field ) // I have a value
+     and
+     GetNthRecord ( field ; row ) ≠ GetNthRecord ( field ; row - 1 ) // record above me does not match
+     and
+     IsValid ( GetNthRecord ( field ; row + 1 ) ); // I do have a record below me
+
+ part = "middle";
+   // Determine if in the middle of a group
+     not IsEmpty ( field ) // I have a value
+     and
+     GetNthRecord ( field ; row ) = GetNthRecord ( field ; row - 1 ) // record above me has the same value
+     and
+     GetNthRecord ( field ; row ) = GetNthRecord ( field ; row + 1 ); // record below me has the same value
+
+ part = "bottom";
+   // Determine if at the bottom of a group
+     not IsEmpty ( field ) // I have a value
+     and
+     GetNthRecord ( field ; row ) ≠ GetNthRecord ( field ; row + 1 ) // record below me does not match
+     and
+     IsValid ( GetNthRecord ( field ; row + 1 ) ) // there is a record above me
+)
