@@ -16,7 +16,7 @@ Let ([
   var.vertical     = PatternCount ( dimension ; "vert" );
   var.horizontal   = PatternCount ( dimension ; "horiz" );
   var.parentHeight = If ( isempty ( $parentWindowHeight ) ; Get ( WindowDesktopHeight ) ; $parentWindowHeight );
-  var.parentWidth  = If ( isempty ( $parentWindowWidth ) ; Get ( WindowDesktopwidth ) ; $parentWindowWidth );
+  var.parentWidth  = If ( isempty ( $parentWindowWidth ) ; Get ( WindowDesktopwidth ) ; $parentWindowWidth )
 ];
 
 Case( var.vertical;
