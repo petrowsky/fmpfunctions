@@ -46,3 +46,9 @@ _Path = If ( _HasFile; Substitute( _Path; _File; ""); _Path )
 _Path
 
 )
+
+/*
+Need to add support for the shared Extensions directory
+Substitute ( Get ( DesktopPath ); "/Desktop/"; "/AppData/Local/FileMaker/Extensions/" ) // windows
+Substitute ( Get ( DesktopPath ); "/Desktop/"; "/Library/Application Support/FileMaker/Extensions/" ) // Macintosh
+*/
