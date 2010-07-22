@@ -11,27 +11,30 @@
  *
  */
 
-Let(
-[
+Let ([
 _Windows = Abs( Get( SystemPlatform ) ) - 1;
 
+// Paths are returned via an evaluate using the inbound 'location' var as a reference to the named Let() var
 _Paths = "Let( [
-            _Windows = Abs( Get( SystemPlatform ) ) - 1;
-
+            _Windows     = Abs( Get( SystemPlatform ) ) - 1;
             _Desktop     = Get( DesktopPath );
             _Documents   = Get( DocumentsPath );
             _Application = Get( FileMakerPath );
             _File        = Substitute( Get( FilePath ) ; \"file:\" ; \"\" );
             _Preferences = Get( PreferencesPath );
             _Temp        = If ( _Windows; Substitute ( _Documents ; \"My Documents\" ; \"Local Settings\" ) & \"Temp/\"; \"/private/tmp/\" );
-            _Extensions  = Get( FileMakerPath ) & \"Extensions/\"
+            _Extensions  = Get( FileMakerPath ) & \"Extensions/\";
+            path.win     = \"/AppData/Local/FileMaker/Extensions/\";
+            path.mac     = \"/Library/Application Support/FileMaker/Extensions/\";
+            _SharedExt   = Substitute ( Get ( DesktopPath ); \"/Desktop/\"; If ( _Windows ; path.win ; path.mac ) );
+            _FMTemp      = Get ( TemporaryPath )
 
             ];¶_" &
             location
             & ")";
 
 // Only these values for folder are possible
-_Match = "Desktop Documents Application File Preferences Temp Extensions";
+_Match = "Desktop Documents Application File Preferences Temp Extensions SharedExt FMTemp";
 
 // Generate the actual path
 _Path = If ( PatternCount( _Match ; location );  Evaluate( _Paths ) ; location ) & If ( not IsEmpty( subfolder ); subfolder );
@@ -46,9 +49,3 @@ _Path = If ( _HasFile; Substitute( _Path; _File; ""); _Path )
 _Path
 
 )
-
-/*
-Need to add support for the shared Extensions directory
-Substitute ( Get ( DesktopPath ); "/Desktop/"; "/AppData/Local/FileMaker/Extensions/" ) // windows
-Substitute ( Get ( DesktopPath ); "/Desktop/"; "/Library/Application Support/FileMaker/Extensions/" ) // Macintosh
-*/
