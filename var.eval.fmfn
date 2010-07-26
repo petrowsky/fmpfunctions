@@ -5,6 +5,7 @@
  * RETURNS:        (bool) True or False based on proper evaluation
  * DEPENDENCIES:   none 
  * NOTES:          Try to always use the List() function when passing multiple values into var.eval!
+ * RELEASE:        100726
  * =====================================================
  * 
  * This custom function evaluates the contents passed as the
