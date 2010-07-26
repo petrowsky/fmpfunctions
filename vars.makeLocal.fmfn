@@ -1,0 +1,12 @@
+/*
+ * =====================================================
+ * vars.makeLocal ( input )
+ *
+ * RETURNS:        (string) All global vars $$ converted to $ locals
+ * DEPENDENCIES:   none 
+ * NOTES:          
+ * =====================================================
+ * 
+ */
+
+Substitute ( input ; "$$" ; "$" )
