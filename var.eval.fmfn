@@ -15,6 +15,7 @@
 
 Let( [
   $$ERROR.VAR.EVAL = ""; // Reset the global error variable for evaluation
+  var.empty = IsEmpty ( contents );
   var.semicolons_exist = ( ValueCount ( contents ) = PatternCount ( contents ; ";¶" ) ) or  ( ValueCount ( contents ) - 1 = PatternCount ( contents ; ";¶" ) );
   var.contents = If ( not var.semicolons_exist ; Substitute ( contents ; ¶ ; ";¶") ; contents ); // Add semicolons if needed
   var.trailing_semicolon = Right ( var.contents ; 1 ) = ";"; // Clean off the trailing semicolon if present
@@ -23,8 +24,8 @@ Let( [
   If (
       Evaluate( 
           "Let ( [" & var.contents & "]; 1 )"        
-      ) = "?";
-      Let ( $$ERROR.VAR.EVAL = List ( "EVAL ERROR"; "-------"; var.contents ); False );
+      ) = "?" or var.empty;
+      Let ( $$ERROR.VAR.EVAL = If ( var.empty ; "EMPTY" ; List ( "EVAL ERROR"; "-------"; var.contents ) ); False );
       True
   )
 )
