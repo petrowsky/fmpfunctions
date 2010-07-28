@@ -1,6 +1,6 @@
 /*
  * =====================================================
- * file.setpath( location; subfolder )
+ * file.setpath ( location ; subfolder )
  * 
  * RETURNS:    (string) path to file/folder location.
  * PARAMS      location = (string) name of the folder location
@@ -24,7 +24,8 @@ _Paths = "Let( [
             _Preferences = Get( PreferencesPath );
             _Temp        = If ( _Windows; Substitute ( _Documents ; \"My Documents\" ; \"Local Settings\" ) & \"Temp/\"; \"/private/tmp/\" );
             _Extensions  = Get( FileMakerPath ) & \"Extensions/\";
-            path.win     = \"/AppData/Local/FileMaker/Extensions/\";
+            isXP         = Abs ( Get ( SystemPlatform ) ) = 2 and Get ( SystemVersion ) < 6;
+            path.win     = If ( isXP ; \"/Local Settings/Application Data/FileMaker/Extensions/\" ; \"/AppData/Local/FileMaker/Extensions/\" );
             path.mac     = \"/Library/Application Support/FileMaker/Extensions/\";
             _SharedExt   = Substitute ( Get ( DesktopPath ); \"/Desktop/\"; If ( _Windows ; path.win ; path.mac ) );
             _FMTemp      = Get ( TemporaryPath )
