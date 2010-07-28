@@ -16,18 +16,18 @@ _Windows = Abs( Get( SystemPlatform ) ) - 1;
 
 // Paths are returned via an evaluate using the inbound 'location' var as a reference to the named Let() var
 _Paths = "Let( [
-            _Windows     = Abs( Get( SystemPlatform ) ) - 1;
+            isWindows    = Abs( Get( SystemPlatform ) ) - 1;
+            isXP         = isWindows and Get ( SystemVersion ) < 6;
             _Desktop     = Get( DesktopPath );
             _Documents   = Get( DocumentsPath );
             _Application = Get( FileMakerPath );
             _File        = Substitute( Get( FilePath ) ; \"file:\" ; \"\" );
             _Preferences = Get( PreferencesPath );
-            _Temp        = If ( _Windows; Substitute ( _Documents ; \"My Documents\" ; \"Local Settings\" ) & \"Temp/\"; \"/private/tmp/\" );
+            _Temp        = If ( isWindows ; Substitute ( _Documents ; \"My Documents\" ; \"Local Settings\" ) & \"Temp/\"; \"/private/tmp/\" );
             _Extensions  = Get( FileMakerPath ) & \"Extensions/\";
-            isXP         = Abs ( Get ( SystemPlatform ) ) = 2 and Get ( SystemVersion ) < 6;
             path.win     = If ( isXP ; \"/Local Settings/Application Data/FileMaker/Extensions/\" ; \"/AppData/Local/FileMaker/Extensions/\" );
             path.mac     = \"/Library/Application Support/FileMaker/Extensions/\";
-            _SharedExt   = Substitute ( Get ( DesktopPath ); \"/Desktop/\"; If ( _Windows ; path.win ; path.mac ) );
+            _SharedExt   = Substitute (  _Desktop ; \"/Desktop/\"; If ( isWindows ; path.win ; path.mac ) );
             _FMTemp      = Get ( TemporaryPath )
 
             ];¶_" &
@@ -50,3 +50,18 @@ _Path = If ( _HasFile; Substitute( _Path; _File; ""); _Path )
 _Path
 
 )
+
+/*
+//Unit test
+List (
+file.setpath ( "Desktop" ; "" );
+file.setpath ( "Documents" ; "" );
+file.setpath ( "Application" ; "" );
+file.setpath ( "File" ; "" );
+file.setpath ( "Preferences" ; "" );
+file.setpath ( "Temp" ; "" );
+file.setpath ( "Extensions" ; "" );
+file.setpath ( "SharedExt" ; "" );
+file.setpath ( "FMTemp" ; "" );
+)
+*/
