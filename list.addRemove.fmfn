@@ -1,34 +1,33 @@
 /*
-list.addRemove( value ; valuelist )
-RETURNS:  (string) The supplied list with the value either removed or concatenated 
-*/
+ * list.addRemove ( value; valuelist )
+ * RETURNS:  ( string ) The supplied list with the value either removed or concatenated 
+ *
+ */
 
-Let([ //------------------------- VARIABLES
-  
-  var.list = Substitute( If ( Left ( valuelist ; 1 ) ≠ ¶ ; "^") & valuelist & "^" ; ¶ ; "^^" ) ; // List minus all returns
-  var.match = "^" & value & "^" ; // Value to match
-  var.exists = PatternCount ( var.list ; var.match )
+Let ( [ //------------------------- VARIABLES
+ 
+	var.list = Substitute ( If ( Left ( valuelist; 1 ) ≠ ¶; "^") & valuelist & "^"; ¶; "^^" ); // List minus all returns
+	var.match = "^" & value & "^"; // Value to match
+	var.exists = PatternCount ( var.list; var.match )
 
-];    //------------------------- RESULT
+];  //------------------------- RESULT
 
-  Case (
-    var.exists ;
-    
-      Let([
-        var.removed = Substitute ( var.list ; var.match ; "" ) ; // Kill matching values
-        var.list = Substitute ( var.removed ; "^^" ; ¶ ) ; // Put returns back in
-        var.list = Middle ( var.list ; 2 ; 100000 ) ; // Trim leading ^
-        var.list = Left ( var.list ; Length ( var.list ) - 1 ) ; // Trim trailing ^
-        var.cleaned = Substitute ( var.list ; ¶ ; "" ) ; // Remove returns for trimming
-        var.char.first = Position( var.list; Left( var.cleaned; 1 ); 0; 1 ); // Position of firt non cleaned char
-        var.char.last = Position( var.list; Right( var.cleaned; 1 ); Length( var.list ); -1 ) // Position of last non cleaned char
-        
-      ] ;
-        Middle( var.list; var.char.first; var.char.last - var.char.first + 1 )
-      ) ;
-      
-    If ( valuelist ≠ "" ; valuelist & ¶ ) & value // default
-  )
+	Case ( 
+		var.exists;
+			Let ( [
+				var.removed = Substitute ( var.list; var.match; "" ); // Kill matching values
+				var.list = Substitute ( var.removed; "^^"; ¶ ); // Put returns back in
+				var.list = Middle ( var.list; 2; 100000 ); // Trim leading ^
+				var.list = Left ( var.list; Length ( var.list ) - 1 ); // Trim trailing ^
+				var.cleaned = Substitute ( var.list; ¶; "" ); // Remove returns for trimming
+				var.char.first = Position ( var.list; Left ( var.cleaned; 1 ); 0; 1 ); // Position of firt non cleaned char
+				var.char.last = Position ( var.list; Right ( var.cleaned; 1 ); Length ( var.list ); -1 ) // Position of last non cleaned char
+			];
+				Middle ( var.list; var.char.first; var.char.last - var.char.first + 1 )
+			);
+
+		If ( valuelist ≠ ""; valuelist & ¶ ) & value // default
+	)
 
 )
 
@@ -36,22 +35,22 @@ Let([ //------------------------- VARIABLES
  * Unit tests
  */
  
-/*                                                                                     
-Let(                                                                                   
-_ = "--------------------";                                                            
-                                                                                       
-  List(                                                                                
-    List( "At beginning (one)"; _ ; list.addRemove ( "one" ; List( "one" ; "two" ; "three" ) ) ; _ );
-    List( "At ending (three)"; _ ; list.addRemove ( "three" ; List( "one" ; "two" ; "three" ) ) ; _ );
-    List( "With multiple spread out (one)"; _ ; list.addRemove ( "one" ; List( "one" ; "two" ; "one" ; "three" ) ) ; _ );
-    List( "With multiple at beginning (one)"; _ ; list.addRemove ( "one" ; List( "one" ; "one" ; "two" ; "three" ) ) ; _ );
-    List( "With multiple at ending (three)"; _ ; list.addRemove ( "three" ; List( "one" ; "two" ; "three" ; "three" ) ) ; _ );
-    List( "With multiple in middle (two)"; _ ; list.addRemove ( "two" ; List( "one" ; "two" ; "two" ; "three" ) ) ; _ );
-    List( "With even returns at start (two)"; _ ; list.addRemove ( "two" ; "¶¶¶¶one¶two¶three" ) ; _ );
-    List( "With odd returns at start (two)"; _ ; list.addRemove ( "two" ; "¶¶¶one¶two¶three" ) ; _ );
-    List( "With even returns at end (two)"; _ ; list.addRemove ( "two" ; "one¶two¶three¶¶¶¶" ) ; _ );
-    List( "With odd returns at end (two)"; _ ; list.addRemove ( "two" ; "one¶two¶three¶¶¶" ) ; _ );
-    List( "Without value (one)"; _ ; list.addRemove ( "one" ; List( "two" ; "three" ) ) ; _ );
-    )                                                                                  
-)                                                                                      
+/*
+Let (
+_ = "--------------------";
+
+ List (
+  List ( "At beginning ( one )"; _; list.addRemove ( "one"; List ( "one"; "two"; "three" ) ); _ );
+  List ( "At ending ( three )"; _; list.addRemove ( "three"; List ( "one"; "two"; "three" ) ); _ );
+  List ( "With multiple spread out ( one )"; _; list.addRemove ( "one"; List ( "one"; "two"; "one"; "three" ) ); _ );
+  List ( "With multiple at beginning ( one )"; _; list.addRemove ( "one"; List ( "one"; "one"; "two"; "three" ) ); _ );
+  List ( "With multiple at ending ( three )"; _; list.addRemove ( "three"; List ( "one"; "two"; "three"; "three" ) ); _ );
+  List ( "With multiple in middle ( two )"; _; list.addRemove ( "two"; List ( "one"; "two"; "two"; "three" ) ); _ );
+  List ( "With even returns at start ( two )"; _; list.addRemove ( "two"; "¶¶¶¶one¶two¶three" ); _ );
+  List ( "With odd returns at start ( two )"; _; list.addRemove ( "two"; "¶¶¶one¶two¶three" ); _ );
+  List ( "With even returns at end ( two )"; _; list.addRemove ( "two"; "one¶two¶three¶¶¶¶" ); _ );
+  List ( "With odd returns at end ( two )"; _; list.addRemove ( "two"; "one¶two¶three¶¶¶" ); _ );
+  List ( "Without value ( one )"; _; list.addRemove ( "one"; List ( "two"; "three" ) ); _ );
+  )
+)
 */
