@@ -1,0 +1,20 @@
+/* 
+--------------------------
+Author: Christopher Gaunt
+v1.0, April 6, 2009
+solutions@cordega.com
+
+Returns an integer that represents a color obtained by converting standard 6 character hexadecimal input.  Useful if you don't need to know the actual RGB values)
+Hex =  Hexadecimal input. Handles inputs containing leading/trailing spaces and/or # symbol.  Self-contained.  No external or self-calls.
+--------------------------
+*/
+
+Let ([
+ $HexClean = Trim ( Filter ( Upper ( Hex ) ; "0123456789ABCDEF" ) )
+;$HexSplit =  
+    "(" & ( Middle ( $HexClean ; 1 ; 1 ) & "* 16 + " & Middle ( $HexClean ; 2 ; 1 ) ) & ")* 65536 +" & 
+    "(" & ( Middle ( $HexClean ; 3 ; 1 ) & "* 16 + " & Middle ( $HexClean ; 4 ; 1 ) ) & ")* 256 +" &
+    "(" & ( Middle ( $HexClean ; 5 ; 1 ) & "* 16 + " & Middle ( $HexClean ; 6 ; 1 ) ) & ")"
+] ;
+Evaluate ( Substitute ( $HexSplit ; [ "A" ; 10 ] ; [ "B" ; 11 ] ; [ "C" ; 12 ] ; [ "D" ; 13 ] ; [ "E" ; 14 ] ; [ "F" ; 15 ] ) )
+) // end let
