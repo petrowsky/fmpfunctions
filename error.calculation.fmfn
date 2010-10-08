@@ -1,0 +1,33 @@
+/*
+ * =====================================================
+ * error.calculation ( fieldName ; requiredElementNames ; requiredType )
+ * 
+ * PARAMETERS:			@fieldName = FileMaker field reference
+ *							@requiredElementNames = List() of required element names
+ *							@requiredTypes = matching list of types for each element
+ * RETURNS:				(boolean) Whether or not there is a calculation error
+ * DEPENDENCIES:		none
+ * NOTES:				none
+ * =====================================================
+ * 
+ */
+
+Let ( [
+	var.fieldName = GetFieldName ( fieldName )
+];
+	Let ( [
+		$$ERROR.CALCULATION = FilterValues ( Case (
+					requiredType = "Table";
+						TableNames ( Get ( FileName ) );
+
+					requiredType = "Field";
+						FieldNames ( Get ( FileName ) ; Get ( LayoutName ) );
+
+					""
+				); requiredElementNames ) ≠ requiredElementNames &¶;
+		// Set the error into the global
+		$$ERROR.CALCULATION = If ( $$ERROR.CALCULATION; var.fieldName & ": Missing literal references"; "" )
+	];
+		""
+	)
+)
