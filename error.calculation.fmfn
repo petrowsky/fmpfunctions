@@ -20,7 +20,6 @@ Let ( [
 				requiredType = "Field";
 					FieldNames ( Get ( FileName ) ; Get ( LayoutName ) );
 
-
 				requiredType = "Layout";
 					LayoutNames ( Get ( FileName ) );
 
