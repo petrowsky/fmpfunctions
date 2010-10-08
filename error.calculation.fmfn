@@ -13,21 +13,17 @@
  */
 
 Let ( [
-	var.fieldName = GetFieldName ( fieldName )
+	$$ERROR.CALCULATION = FilterValues ( Case (
+				requiredType = "Table";
+					TableNames ( Get ( FileName ) );
+
+				requiredType = "Field";
+					FieldNames ( Get ( FileName ) ; Get ( LayoutName ) );
+
+				""
+			); requiredElementNames ) ≠ requiredElementNames &¶;
+	// Set the error into the global
+	$$ERROR.CALCULATION = If ( $$ERROR.CALCULATION; fieldName & ": Missing literal references"; "" )
 ];
-	Let ( [
-		$$ERROR.CALCULATION = FilterValues ( Case (
-					requiredType = "Table";
-						TableNames ( Get ( FileName ) );
-
-					requiredType = "Field";
-						FieldNames ( Get ( FileName ) ; Get ( LayoutName ) );
-
-					""
-				); requiredElementNames ) ≠ requiredElementNames &¶;
-		// Set the error into the global
-		$$ERROR.CALCULATION = If ( $$ERROR.CALCULATION; var.fieldName & ": Missing literal references"; "" )
-	];
-		""
-	)
+	"Check global variable $$ERROR.CALCULATION"
 )
