@@ -31,6 +31,9 @@ Let ( [
 				requiredType = "Object";
 				   LayoutObjectNames ( Get ( FileName ) ; Get ( LayoutName ) );
 
+				requiredType = "Window";
+				   WindowNames ( Get ( FileName ) );
+
 				""
 		); requiredElementNames );
 		// Else
