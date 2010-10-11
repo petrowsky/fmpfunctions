@@ -9,8 +9,8 @@
  *                evaluation
  * DEPENDENCIES:
  *                none 
- * NOTES:			Because FileMaker changed Get ( PrivilegeSetName )
- *						Evaluate () must be used
+ * NOTES:         Because FileMaker changed Get ( PrivilegeSetName )
+ *                Evaluate () must be used
  *
  * RELEASE:       101011
  * =====================================================

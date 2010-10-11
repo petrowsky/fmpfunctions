@@ -7,7 +7,8 @@
  *							@requiredTypes = matching list of types for each element
  * RETURNS:				(boolean) Whether or not there is a calculation error
  * DEPENDENCIES:		none
- * NOTES:				none
+ * NOTES:				References, at time of evaluation, are based on
+ *                   current context.
  * =====================================================
  * 
  */
@@ -26,6 +27,9 @@ Let ( [
 
 				requiredType = "Layout";
 					LayoutNames ( Get ( FileName ) );
+				
+				requiredType = "Object";
+				   LayoutObjectNames ( Get ( FileName ) ; Get ( LayoutName ) );
 
 				""
 		); requiredElementNames );
