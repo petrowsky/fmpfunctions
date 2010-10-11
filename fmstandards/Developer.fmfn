@@ -9,9 +9,10 @@
  *                evaluation
  * DEPENDENCIES:
  *                none 
- * NOTES:
+ * NOTES:			Because FileMaker changed Get ( PrivilegeSetName )
+ *						Evaluate () must be used
  *
- * RELEASE:       101009
+ * RELEASE:       101011
  * =====================================================
  * 
  */
@@ -24,6 +25,12 @@ Let ( [
 
 	PatternCount ( ¶& var.developers &¶ ; ¶& Get ( AccountName ) &¶ ) ≥ 1
 	or
-	Get ( AccountPrivilegeSetName ) = "[Full Access]"
+	If ( GetAsNumber ( Get ( ApplicationVersion ) ) < 11;
+		Evaluate ( "Get ( PrivilegeSetName )" ) = "[Full Access]";
+		Evaluate ( "Get ( AccountPrivilegeSetName )" ) = "[Full Access]"
+	)
 
 )
+
+
+
