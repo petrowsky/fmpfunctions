@@ -1,14 +1,18 @@
-/*
+/**
  * =====================================================
  * ErrorReference ( elementName ; requiredElementNames ; requiredType )
  * 
- * PARAMETERS:			@elementName = FileMaker field reference
- *							@requiredElementNames = List() of required element names
- *							@requiredTypes = matching list of types for each element
- * RETURNS:				(boolean) Whether or not there is a calculation error
- * DEPENDENCIES:		none
- * NOTES:				References, at time of evaluation, are based on
- *                   current context.
+ * PARAMETERS:
+ *                @elementName = FileMaker field reference
+ *                @requiredElementNames = List() of required element names
+ *                @requiredTypes = matching list of types for each element
+ * RETURNS:
+ *                (boolean) Whether or not there is a calculation error
+ * DEPENDENCIES:
+ *                none
+ * NOTES:
+ *                References, at time of evaluation, are based on
+ *                current context.
  * =====================================================
  * 
  */
