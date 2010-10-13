@@ -1,6 +1,6 @@
 /**
  * =====================================================
- * FieldNameVariable ( field ; prefix )
+ * GetFieldNameVariable ( field ; prefix )
  *
  * PURPOSE:
  *                To be used within an auto-enter calculation
