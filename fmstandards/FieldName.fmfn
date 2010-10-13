@@ -1,6 +1,6 @@
 /**
  * =====================================================
- * FieldNameVariable ( prefix )
+ * FieldNameVariable ( field ; prefix )
  *
  * PURPOSE:
  *                To be used within an auto-enter calculation
@@ -9,6 +9,7 @@
  *                of the same name.
  * 
  * PARAMETERS:
+ *                @field = (reference) a field
  *                @prefix = (enum) either "$" or "$$"
  * RETURNS:
  *                (variable) the content of a variable with
@@ -22,7 +23,7 @@
  */
 
 Let ( [
-	var.field = GetFieldName ( Self );
+	var.field = GetFieldName ( field );
 	var.parts = Substitute ( var.field ; "::" ; ¶ )
 ];
 	Evaluate ( prefix & GetValue ( var.parts ; 2 ) )
