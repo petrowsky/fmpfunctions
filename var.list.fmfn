@@ -16,20 +16,33 @@
  */
  
 Let ( [
-  singleValue = ValueCount ( keys ) = 1 and ValueCount ( values ) = 1; // only one key/value pair
-  isValid  = ValueCount ( keys ) = ValueCount ( values ); // both lists have the same number of values
-  notEmpty = not IsEmpty( keys ) and not IsEmpty ( values ); // lists aren't empty
-  varString = If ( scope = "global" ; "$$" ; "$" ) & GetValue ( keys ; 1 )  & " = " & GetValue ( values ; 1 ) & If ( ValueCount( keys ) = 1; "" ; ";¶" )
+	singleValue = ValueCount ( keys ) = 1 and ValueCount ( values ) = 1; // only one key/value pair
+	isValid  = ValueCount ( keys ) = ValueCount ( values ); // both lists have the same number of values
+	notEmpty = not IsEmpty( keys ) and not IsEmpty ( values ); // lists aren't empty
+	value = GetValue ( values ; 1 );
+	valueIsNumber  = Length ( GetAsNumber ( Filter ( value; "0123456789.-" ) ) ) = Length ( value );
+	valueIsTimestamp = GetAsTimestamp ( value ) = value; // doesn't work
+	valueIsDate = GetAsDate ( value ) = value; // doesn't work
+	valueIsTime = GetAsTime ( value ) = value; // doesn't work
+	value = Case (
+		valueIsNumber;
+			value;
+
+		Quote ( value ) // default for all strings
+	);
+	varString = If ( scope = "global" ; "$$" ; "$" ) & GetValue ( keys ; 1 )  & " = " & value & If ( ValueCount( keys ) = 1; "" ; ";¶" )
 ];
-  Case (
-    singleValue ;
-      varString;
-    isValid and notEmpty ;
-      varString &
-      var.list ( MiddleValues ( keys ; 2 ; 1000000 ) ; MiddleValues ( values ; 2 ; 1000000 ) ; scope );
-    // default
-    "Lists don't match in length - use the Quote() function around string values"
-  )
+	Case (
+		singleValue;
+			varString;
+			
+		isValid and notEmpty;
+			varString &
+			var.list ( MiddleValues ( keys ; 2 ; 1000000 ) ; MiddleValues ( values ; 2 ; 1000000 ) ; scope );
+		
+		// default
+		"Lists don't match in length - use the Quote() function around string values"
+	)
 )
 
 /*
@@ -41,8 +54,8 @@ var.list (
   )
 ;
   List(
-    Quote("single value");
-    Quote("multiple¶values")
+    "single value";
+    "multiple¶values"
   )
 ; "local" )
 */
