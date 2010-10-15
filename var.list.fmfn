@@ -41,7 +41,7 @@ Let ( [
 			var.list ( MiddleValues ( keys ; 2 ; 1000000 ) ; MiddleValues ( values ; 2 ; 1000000 ) ; scope );
 		
 		// default
-		"Lists don't match in length - use the Quote() function around string values"
+		"ERROR » Lists don't match in length"
 	)
 )
 
