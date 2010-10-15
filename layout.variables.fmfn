@@ -1,0 +1,29 @@
+/*
+ * =====================================================
+ * layout.variables ( scope )
+ * 
+ * RETURNS:       (string) key/value pairs as $key = value in positional order
+ * PARAMETERS:    @scope = (enum) global, local
+ * DEPENDENCIES:  none
+ * ABOUT:         Takes two compliment set of lists
+ *                and turns them into FMP defined variables
+ * NOTES:         none
+ * =====================================================
+ *
+ */
+
+Let ( [
+	var.fieldNames = FieldNames ( Get ( FileName ) ; Get ( LayoutName ) );
+	var.prefix = "Let ( var.value = GetField ( \"";
+	var.suffix = "\" ); If ( IsEmpty ( var.value ) ; \"-\" ; var.value ) ) &\¶&";
+	var.calculation = var.prefix &
+	   Substitute (
+   		var.fieldNames;
+   		[ ¶ ; ¶ & var.prefix ];
+   		[ ¶ ; var.suffix & ¶ ]
+   	) & var.suffix;
+	var.calculation = Left ( var.calculation ; Length ( var.calculation ) - 3 ); // trim off last concatenation
+	var.fieldData = Evaluate ( var.calculation )
+];
+   var.list ( var.fieldNames ; var.fieldData ; scope )
+)
